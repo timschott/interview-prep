@@ -743,10 +743,12 @@ WHERE teams.division = 'FBS (Division I-A Teams)'
 
 * `(INNER) JOIN`: Returns records that have matching values in both tables
   * The *intersection* of the two tables.
-  * Example - if a player goes to ITT tech, and they aren't in the teams table, they won't be included in 
+  * Example - if a player goes to ITT tech, and they aren't in the teams table, they won't be included in
+
   ```FROM benn.college_football_players players
   JOIN benn.college_football_teams teams
-    ON teams.school_name = players.school_name```
+    ON teams.school_name = players.school_name
+  ```
 
 * `LEFT (OUTER) JOIN`: Returns records from the left table, and the matched records from the right table.
   * You'll get back `NULL` in rows when there is no matching right side
@@ -956,4 +958,3 @@ SELECT 'investments_part1' AS dataset_name,
  GROUP BY 1,2
 
 ```
-
