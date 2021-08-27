@@ -739,7 +739,6 @@ ON players.school_name = teams.school_name
 WHERE teams.division = 'FBS (Division I-A Teams)'
 ```
 
-
 ## Types of Joins
 
 * `(INNER) JOIN`: Returns records that have matching values in both tables
@@ -764,6 +763,7 @@ WHERE teams.division = 'FBS (Division I-A Teams)'
 
 You can join a table to itself.
 
+
 ```
 SELECT
 e.employee_name AS 'Employee',
@@ -772,3 +772,63 @@ FROM employee e
 INNER JOIN employee m ON m.id = e.manager_id
 ```
 
+
+* Remember, using a `LEFT` join means that you can have null values for the right table.
+
+Write a query that performs an inner join between the `tutorial.crunchbase_acquisitions` table 
+and the `tutorial.crunchbase_companies` table, but instead of listing individual rows, 
+count the number of non-null rows in each table.
+
+
+```
+SELECT COUNT(companies.permalink) AS companies_rowcount,
+COUNT(acquisitions.company_permalink) AS acquisitions_rowcount
+FROM 
+tutorial.crunchbase_acquisitions acquisitions
+JOIN 
+tutorial.crunchbase_companies companies
+ON acquisitions.company_permalink = companies.permalink
+```
+
+
+* Now that you have access to both tables, you can count parts of them individually.
+* Using a `LEFT JOIN` here, you're going to get results back that take into account nulls
+  * So still the same left side, but right side is now much larger
+    * Because it contains a good amount of entries that don't have a permalink
+
+
+```
+/*
+Count the number of unique companies (don't double-count companies) 
+and unique acquired companies by state. Do not include results for which there is no state data, 
+and order by the number of acquired companies from highest to lowest.
+*/
+
+SELECT companies.state_code,
+       COUNT(DISTINCT companies.permalink) AS unique_companies,
+       COUNT(DISTINCT acquisitions.company_permalink) AS unique_companies_acquired
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+ WHERE companies.state_code IS NOT NULL
+ GROUP BY 1
+ ORDER BY 3 DESC
+
+CA	6170	616
+NY	1731	128
+MA	1272	107
+WA	638	  64
+
+```
+
+* Here, we want to use a `LEFT JOIN` to have a more inclusive output.
+* Perform the join on the same field as before, but also filter out rows missing a`state_code`.
+* Grouping by the first column, state, attempts to condense all the rows based on that value
+* So naturally we'll have 50 different rows in the result. 
+* Then, we need to do the counts. At this point, we have access to both of the tables because of the join
+* So we can count the column of interest in each table.
+
+* Why is `RIGHT JOIN` rarely used?
+  * Because you can achieve the same results using a `LEFT JOIN` and swapping the join order.
+
+* Note: the `WHERE` clause in a join statement is processed *after* the join takes place.
