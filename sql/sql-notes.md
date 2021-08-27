@@ -1,10 +1,8 @@
-# SQL NOTES #
+# SQL NOTES
 
 SQL - Structured Query Language. Used to construct and maintain databases at scale.
 
 A database is a group of tables.
-
-# Grabbing Data
 
 ## SELECT and FROM
 
@@ -124,13 +122,13 @@ WHERE west > midwest + northeast
 
 More advanced aggregation methods to come (ie to calculate averages and things like that).
 
-### Logical Operators - allow you to use multiple comparisons in a single query
+## Logical Operators - allow you to use multiple comparisons in a single query
 
-#### `LIKE`
+### `LIKE`
 
 Let's you match on character similarity using string format notation. 
 
-#### `Wilcards`:
+### `Wilcards`:
 *   The percent (%) matches any string of zero or more characters.
     *   `s%` matches sa, six, sunk.
 *   The underscore (_) matches any *single* character. 
@@ -168,7 +166,7 @@ There are some other reserved classes, like
 
 This can also be achieved with `IN`....
 
-#### `IN`
+### `IN`
 
 Specify a list of values you'd like to include in the results.
 
@@ -182,20 +180,20 @@ or
 "artist" in ('M.C. Hammer', 'Hammer', 'Elvis Presley')
 ```
 
-#### `BETWEEN`
+### `BETWEEN`
 
 Between works to select rows in a specific range. It can also be replaced by using `AND` - its a little more compact. 
 
 Note: the command is *Inclusive* at its bounds ie `BETWEEN 5 and 10` will contain rows at the margins.
 
 
-#### `IS NULl`
+### `IS NULl`
 
 Used to exclude rows that contain missing entries.
 
 `SELECT * from houses where tax_status IS NULL`
 
-#### `AND`
+### `AND`
 
 Used to combine operations - rows must satisfy the conditions on both sides of the clause.
 
@@ -216,7 +214,7 @@ SELECT *
    AND year IN (1990, 2000, 2010)
 ```   
 
-#### `OR`
+### `OR`
 
 Select rows that satisfy either of two conditions. Much like AND, it can be chained with a group of conditions.
 
@@ -244,7 +242,7 @@ WHERE
 AND (year BETWEEN 1970 and 1979 OR year BETWEEN 1990 and 1999)
 ```
 
-#### `NOT`
+### `NOT`
 
 Used to select rows for which that condition is false. You could imagine using this with `LIKE` if you don't want to bend over backwards with a regex (ie not like a rather than like [bcdef...])
 
@@ -257,7 +255,7 @@ SELECT *
    AND artist IS NOT NULL
 ```
 
-#### `ORDER BY`
+### `ORDER BY`
 
 Used to order results alphabetically/numerically based on the inputted sort-column(s).
 
@@ -281,14 +279,18 @@ SELECT *
  WHERE year = 2010
  ORDER BY year_rank, artist
 
-#### Comments 
+### Comments 
 
 Single line comments --are preceded w/ 2 dashes
 Multi line comments /* use this syntax
 
 */
 
---- Interlude: What's in a SQL Interview? https://www.youtube.com/watch?v=pJeGiUTWi1s&list=PLY1Fi4XflWStFs6tLQ3Gey2Aaq_U4-Xnc&index=9&ab_channel=DataInterviewPro ---
+## Video Interlude
+
+### What's in a SQL Interview?
+
+[Emma Ding](https://www.youtube.com/watch?v=pJeGiUTWi1s&list=PLY1Fi4XflWStFs6tLQ3Gey2Aaq_U4-Xnc&index=9&ab_channel=DataInterviewPro) ---
 
 * Likely will be asked SQL questions at multiple stages in interview process
 * Will range from easy to hard
@@ -307,7 +309,8 @@ Multi line comments /* use this syntax
   * Ask clear questions when getting stuck (what format, what timestamp, etc.)
 * To practice: set a timer! (5, 10 and 15 minutes)
 
---- Approaching Data Science SQL Question https://www.youtube.com/watch?v=tNXliLTlrV8&list=PLv6MQO1ZzdmpDYL3eZRs0Z_PqqYGn2iGR&index=4&ab_channel=NateatStrataScratch ---
+### Approaching Data Science SQL Question
+[Nate at Strata Scratch](https://www.youtube.com/watch?v=tNXliLTlrV8&list=PLv6MQO1ZzdmpDYL3eZRs0Z_PqqYGn2iGR&index=4&ab_channel=NateatStrataScratch ---)
 
 * First, "to confirm..." and *restate the question*
 * Second, explore data schema and go through *assumptions* 
@@ -328,7 +331,7 @@ Multi line comments /* use this syntax
 
 ## "Intermediate SQL" 
 
-## Aggregate Functions
+### Aggregate Functions
 
 *   `COUNT`
     *   Count the number of rows in a particular column.
@@ -357,7 +360,7 @@ Multi line comments /* use this syntax
     *   Returns the remainder of two values
     *   `SELECT MOD(price, tax)`
 
-## GROUP BY 
+### GROUP BY 
 
 Allows you to separate data into groups. Groups rows that have the same values into summary rows, ie "find the number of customers in each country."
 
@@ -417,7 +420,7 @@ GROUP BY month
 ORDER BY month
 ```
 
-## HAVING 
+### HAVING 
 
 The `WHERE` keyword cannot be used, *directly*, with aggregate functions ;-(
 
@@ -465,11 +468,7 @@ HAVING diff > 10
 ```
 is not possible with `WHERE` because `diff` is an alias.
 
-Convert an Integer to Character?
-
-`CAST(Column AS CHAR)`
-
-## CASE statements
+### CASE statements
 
 SQL's way of handling if/then control statements.
 
@@ -616,7 +615,7 @@ GROUP BY year_description
 
 Note that we need to smush the data into just the buckets we made, so we use the closing `GROUP BY`.
 
-## DISTINCT
+### DISTINCT
 
 Used to return only different values. Use to explore the data in a column.
 
@@ -739,7 +738,7 @@ ON players.school_name = teams.school_name
 WHERE teams.division = 'FBS (Division I-A Teams)'
 ```
 
-## Types of Joins
+### Types of Joins
 
 * `(INNER) JOIN`: Returns records that have matching values in both tables
   * The *intersection* of the two tables.
@@ -792,12 +791,10 @@ tutorial.crunchbase_companies companies
 ON acquisitions.company_permalink = companies.permalink
 ```
 
-
 * Now that you have access to both tables, you can count parts of them individually.
 * Using a `LEFT JOIN` here, you're going to get results back that take into account nulls
   * So still the same left side, but right side is now much larger
     * Because it contains a good amount of entries that don't have a permalink
-
 
 ```
 /*
@@ -893,7 +890,7 @@ GROUP BY 1
 ORDER BY 2 DESC
 ```
 
-## Union
+### Union
 
 * While joins allow you to place data side by side (vertically), `UNION` allows you to stack tables on top of one another (horizontally).
 * This operation only attaches distinct rows. 
@@ -977,7 +974,7 @@ LEFT JOIN tutorial.crunchbase_investments_part1 investments
 * You can also join on multiple foreign keys. 
   * This can improve query performance, since foreign keys are indexed.
   
-## Self Join
+### Self Join
 
 * A self join is a regular join, but the table is joined with itself.
 
@@ -999,4 +996,33 @@ JOIN benn.college_football_players players2
 ON players1.player_name <> players2.player_name 
 AND players1.school_name = 'Virginia'
 ```
+
+## Advanced SQL ;^O) 
+
+### Data Types
+
+* `CHAR(size)`: a fixed length String
+* `VARCHAR`: a variable length String
+* `INT`: a medium integer
+* `FLOAT/DOUBLE`: floating point numbers
+* `DATE`: A date. 
+  * Format: YYYY-MM-DD
+* `DATETIME`: A date/time combination. 
+  * Format: YYYY-MM-DD hh:mm:ss.
+* `TIMESTAMP`: 
+  * Format: YYYY-MM-DD hh:mm:ss.
+  * based on Unix time (like Java Date)
+* `YEAR`: a year in four-digit format
+* `BOOLEAN`: TRUE or FALSE
+  
+#### Changing a Columns Data Type (Casting)
+
+You can use the `CAST` command.
+
+* `CAST(Column AS CHAR)`
+
+#### Dates
+
+Dates are formatted year first to preserve ordering. 
+
 
