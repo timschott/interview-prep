@@ -831,4 +831,129 @@ WA	638	  64
 * Why is `RIGHT JOIN` rarely used?
   * Because you can achieve the same results using a `LEFT JOIN` and swapping the join order.
 
-* Note: the `WHERE` clause in a join statement is processed *after* the join takes place.
+* Note: The `WHERE` clause in a join statement is processed *after* the join takes place.
+* Sometimes, though, you want to perform filtering *before* the join takes place.
+  * You might only want to actually join the tables under certain conditions.
+
+```
+SELECT companies.permalink AS companies_permalink,
+       companies.name AS companies_name,
+       acquisitions.company_permalink AS acquisitions_permalink,
+       acquisitions.acquired_at AS acquired_date
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+   AND acquisitions.company_permalink != '/company/1000memories'
+ ORDER BY 1
+ ```
+
+* You can add clauses right after the `ON` statement.
+* Here for example we basically hardcode a value we don't want to include.
+* Note that its checked per table, so if there was `company/1000memories` permalink in `companies` then that row is still going to be included
+
+```
+
+/*
+Write a query that shows a company's name, "status" (found in the Companies table), and the number of unique investors in that company.
+Order by the number of investors from most to fewest.
+Limit to only companies in the state of New York.
+*/
+
+SELECT investments.company_name, companies.status, COUNT(DISTINCT(investments.investor_name))
+FROM tutorial.crunchbase_investments investments
+JOIN tutorial.crunchbase_companies companies
+ON investments.company_permalink = companies.permalink
+WHERE investments.company_state_code ='NY'
+GROUP BY 1, 2
+ORDER BY 3 DESC
+
+```
+
+* **You need to group by both columns here because you're also selecting the companies status**
+
+List investors based on how many companies they are invested in 
+
+```
+SELECT investments.investor_name, COUNT(DISTINCT(investments.company_name))
+FROM tutorial.crunchbase_investments investments
+GROUP BY 1
+ORDER BY 2 DESC
+```
+
+Do the above, but include a row that counts how many companies lack an investor
+
+```
+SELECT CASE WHEN investments.investor_name IS NULL THEN 'No Investors'
+            ELSE investments.investor_name END AS investor,
+       COUNT(DISTINCT investments.company_name) AS companies_invested_in
+FROM tutorial.crunchbase_investments investments
+GROUP BY 1
+ORDER BY 2 DESC
+```
+
+## Union
+
+* While joins allow you to place data side by side (vertically), `UNION` allows you to stack tables on top of one another (horizontally).
+* This operation only attaches distinct rows. 
+  * In order to attach duplicate, use `UNION ALL`
+* Pre-conditions
+  1. Both tables must have the same number of columns
+  2. the columns must have the same data type in the same order 
+* This operation is typically used if you have a large data set split into constituent parts.
+* This operation involves two different select statements
+  * This means you can filter the tables differently, with separate where statements.
+  ```
+  SELECT *
+  FROM tutorial.crunchbase_investments
+  WHERE company_name LIKE 'M%'
+  UNION ALL
+  SELECT *
+  FROM tutorial.crunchbase_investments
+  WHERE company_name LIKE 'T%'
+   ```
+* However, you can't apply separate `LIMIT` statements to the top and bottom `SELECT`'s.
+* If you want to perform an intermediate join, while also doing a `UNION`, you need to perform the join once on each `SELECT`
+  * Which makes sense... 
+  e.g. 
+  ```
+  SELECT *
+  FROM tutorial.crunchbase_investments_part1 part1
+  LEFT JOIN tutorial.crunchbase_companies companies on part1.company_permalink = companies.permalink
+ UNION ALL
+ SELECT *
+   FROM tutorial.crunchbase_investments_part2 part2
+   LEFT JOIN tutorial.crunchbase_companies companies on part2.company_permalink = companies.permalink
+   ```
+
+```
+/*
+Write a query that shows 3 columns. 
+The first indicates which dataset (part 1 or 2) the data comes from,
+the second shows company status,
+and the third is a count of the number of investors.
+
+Hint: you will have to use the tutorial.crunchbase_companies table 
+as well as the investments tables.
+And you'll want to group by status and dataset. [group by 1 2]
+*/
+
+SELECT 'investments_part1' AS dataset_name,
+       companies.status,
+       COUNT(DISTINCT investments.investor_permalink) AS investors
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments_part1 investments
+    ON companies.permalink = investments.company_permalink
+ GROUP BY 1,2
+
+ UNION ALL
+ 
+ SELECT 'investments_part2' AS dataset_name,
+       companies.status,
+       COUNT(DISTINCT investments.investor_permalink) AS investors
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments_part2 investments
+    ON companies.permalink = investments.company_permalink
+ GROUP BY 1,2
+
+```
+
