@@ -847,7 +847,7 @@ SELECT companies.permalink AS companies_permalink,
     ON companies.permalink = acquisitions.company_permalink
    AND acquisitions.company_permalink != '/company/1000memories'
  ORDER BY 1
- ```
+```
 
 * You can add clauses right after the `ON` statement.
 * Here for example we basically hardcode a value we don't want to include.
@@ -904,7 +904,8 @@ ORDER BY 2 DESC
 * This operation is typically used if you have a large data set split into constituent parts.
 * This operation involves two different select statements
   * This means you can filter the tables differently, with separate where statements.
-  ```
+  
+```
   SELECT *
   FROM tutorial.crunchbase_investments
   WHERE company_name LIKE 'M%'
@@ -912,12 +913,14 @@ ORDER BY 2 DESC
   SELECT *
   FROM tutorial.crunchbase_investments
   WHERE company_name LIKE 'T%'
-   ```
+```
+
 * However, you can't apply separate `LIMIT` statements to the top and bottom `SELECT`'s.
 * If you want to perform an intermediate join, while also doing a `UNION`, you need to perform the join once on each `SELECT`
   * Which makes sense... 
   e.g. 
-  ```
+
+```
   SELECT *
   FROM tutorial.crunchbase_investments_part1 part1
   LEFT JOIN tutorial.crunchbase_companies companies on part1.company_permalink = companies.permalink
@@ -925,7 +928,7 @@ ORDER BY 2 DESC
  SELECT *
    FROM tutorial.crunchbase_investments_part2 part2
    LEFT JOIN tutorial.crunchbase_companies companies on part2.company_permalink = companies.permalink
-   ```
+```
 
 ```
 /*
@@ -958,3 +961,42 @@ SELECT 'investments_part1' AS dataset_name,
  GROUP BY 1,2
 
 ```
+
+* You can include comparison operators directly in `JOIN` clauses
+  
+```
+LEFT JOIN tutorial.crunchbase_investments_part1 investments
+    ON companies.permalink = investments.company_permalink
+   AND investments.funded_year > companies.founded_year + 5
+```
+
+* This is useful for immediately reducing the amount of data that will be returned from the join-result.
+* Remember, that the conditional `AND ...` is evaluated before the join occurs.
+  * You can think of it is as a where clause that only applies to one of the tables.
+* See more [here](https://mode.com/sql-tutorial/sql-joins-where-vs-on#filtering-in-the-on-clause)
+* You can also join on multiple foreign keys. 
+  * This can improve query performance, since foreign keys are indexed.
+  
+## Self Join
+
+* A self join is a regular join, but the table is joined with itself.
+
+```
+SELECT column_name(s)
+FROM table1 T1, table1 T2
+WHERE condition;
+```
+
+* This can be useful for stacking data from the same table vertically
+  * For example, placing 2 football players next to each other that both go to the same school.
+
+Stack every UVA football next to each other across 2 columns.
+
+```
+SELECT players1.player_name as PlayerName1, players2.player_name as PlayerName2, players1.school_name FROM 
+benn.college_football_players players1
+JOIN benn.college_football_players players2
+ON players1.player_name <> players2.player_name 
+AND players1.school_name = 'Virginia'
+```
+
