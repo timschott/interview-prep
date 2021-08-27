@@ -12,6 +12,7 @@
 * Backgrounds
 * We will use python
 * Time: Fridays, 2:30 - ?
+  * in person if you can, but will also have zoom + recording
 * Material Brainstorm
   * Big O
   * Lists
