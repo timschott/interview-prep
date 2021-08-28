@@ -1023,6 +1023,53 @@ You can use the `CAST` command.
 
 #### Dates
 
-Dates are formatted year first to preserve ordering. 
+* Dates are formatted year first to preserve ordering. 
+* When you perform arithmetic on dates, the results are stored as an `interval` data type - a series of integers that represent a period of time. 
+* `NOW()` provides the current time. 
+* `EXTRACT` can give you smaller portions of a well-formatted date
+  * For example: `EXTRACT('month' FROM my_date_column) as month` will give you a column of 1,2,3 etc.
 
+### Data Wrangling in SQL
 
+#### Left, Right and length
+
+* `LEFT` is used to pull a certain number of characters from the left side of a string and present them as a separate string.
+  * `LEFT(string, number of chars)` - note that this is exactly how many characters you want, so for instance
+  * `LEFT(Timothy, 3)` would yield `Tim`.
+* `RIGHT` does the same operation but works from the right side over.
+* `LENGTH` returns how many characters are in the string.
+
+You could imagine using this to split a field that has a time on one side and a date on the other into 2 new columns, cleaned_time and cleaned_date
+
+```
+LEFT(date, 10) AS cleaned_date,
+RIGHT(date, LENGTH(date) - 11) AS cleaned_time
+```       
+
+* `TRIM` can be used to remove characters from the beginning and the end of a string.
+  * in other words, use this to remove prefixes or suffixes
+  * the api is a little weird
+  * `leading`, `trailing`, or `both` are used to denote where you want the characters removed 
+  * e.g. `TRIM(both '()' FROM location)` would turn (x,y) into x,y
+* `POSITION` is the equivalent of `charAt` - numerical value equal to the char number where that substring appears in the target string
+  * can be used to test for string existence
+  * `POSITION('a' IN descript) AS a_position`
+    * returns a 0 if it doesn't exist, else it's (at least) 1.
+    * a little different than using `WHERE column LIKE`.
+    * because that would remove the rows entirely that don't have your substring of interest
+  * case sensitive!
+* `UPPER` and `LOWER` fix your uppercase problems.
+* `SUBSTR` to check string existence.
+  * syntax:  `SUBSTR(string, start position, [optional] number of characters)
+    * impt to note that the 'position' arg here is 1-indexed.
+    * so `SUBSTRING("SQL TUTORIAL", 5, 3)` -> `TUT`
+    * if position is positive, extract from beginning
+    * if position is negative, extracts from the end
+    * if length is omitted, the whole string will be returned (from *start* position
+* `SUBSTRING_INDEX` is a very useful function that works a little bit more like Java's substring
+  * Returns a substring before a specified number of delimiter occurs.
+  * `SUBSTRING_INDEX(string, delimiter, number)`
+  * `SELECT SUBSTRING_INDEX("www.w3schools.com", ".", 1);` -> `www`
+  * you could also jurry rig this using `LEFT` + `POSITION`.
+* `CONCAT` is used to combine strings together.
+* 
