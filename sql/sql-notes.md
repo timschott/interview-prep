@@ -1072,4 +1072,139 @@ RIGHT(date, LENGTH(date) - 11) AS cleaned_time
   * `SELECT SUBSTRING_INDEX("www.w3schools.com", ".", 1);` -> `www`
   * you could also jurry rig this using `LEFT` + `POSITION`.
 * `CONCAT` is used to combine strings together.
-* 
+* `COALESCE` - returns the first non-null argument passed from left to righ.
+* `IFNULL` - allows you to add default behavior in a select statement if you encounter null values
+  * `IFNULL(prereq, 'no prereq chosen')`
+
+### Sub Queries
+
+* A useful pattern for performing operations in multiple steps.
+* Anatomy of a sub query:
+
+```
+SELECT sub.*
+  FROM (
+        SELECT *
+          FROM tutorial.sf_crime_incidents_2014_01
+         WHERE day_of_week = 'Friday'
+       ) sub
+ WHERE sub.resolution = 'NONE'
+```
+
+* First, the "inner-query" is run.
+* Next, the outer-query runs -- *using the results from the inner query as its table of interest!*
+* Sub queries are required to have names, which you add just like an alias, after the parens.
+
+* Use a subquery, naively, to select all Warrant Arrests, and then wrap it in an outer query that only displays unresolved incidents
+
+```
+SELECT sub.* FROM
+(
+SELECT * FROM tutorial.sf_crime_incidents_2014_01 
+WHERE DESCRIPT = 'WARRANT ARREST'
+) sub
+WHERE sub.resolution = 'NONE'
+```
+
+* Note that its best practice to utilize the sub query alias.
+
+* Write a query that displays the average number of monthly incidents
+  
+```
+SELECT CEILING(AVG(sub.incidents)) as mthly_avg FROM
+(
+SELECT EXTRACT('month' FROM cleaned_date) as month, COUNT(incidnt_num) as incidents
+FROM tutorial.sf_crime_incidents_cleandate
+GROUP BY 1
+) sub
+```
+
+* First, we need to group the data together by month, since that is the bucket of interest
+* Then, we count up how many incidents occur per month
+* From there, our inner query is finished.
+* Next, the outer query simply averages the 3 rows that are returned (there is only data from nov/dec/jan) and `CEILING` returns it as a whole number.
+
+* Now write a query that displays the average number of monthly incidents per category of crime
+
+```
+SELECT sub.category,
+       AVG(sub.incidents) AS avg_incidents_per_month
+  FROM (
+        SELECT EXTRACT('month' FROM cleaned_date) AS month,
+               category,
+               COUNT(1) AS incidents
+          FROM tutorial.sf_crime_incidents_cleandate
+         GROUP BY 1,2
+       ) sub
+ GROUP BY 1
+```
+
+* It is similar, but just adds a little more of a narrow band to our buckets.
+* We have to group by an additional column in the sub query
+* And we also have to add a group by to the outer query, because we can't just average the number of incidents - we want 1 level deeper, the average per category.
+
+#### Sub queries in Conditional Logic
+
+* You can use sub queries in the course of conditionals like `WHERE`, `JOIN/ON`, `CASE`.
+* Typically, the result of a sub query in this context is just a single cell
+  * for example, you calculate the smallest date, and then filter your results to only match that:
+  
+```
+  SELECT *
+  FROM tutorial.sf_crime_incidents_2014_01
+ WHERE Date = (SELECT MIN(date)
+                 FROM tutorial.sf_crime_incidents_2014_01
+              )
+```
+
+* Note here, its unnecessary to include an alias because it's just 1 single value returned.
+* `IN` is the only conditional command that will work when a sub query produces multiple results:
+  
+```
+  SELECT *
+  FROM tutorial.sf_crime_incidents_2014_01
+ WHERE Date IN (SELECT date
+                 FROM tutorial.sf_crime_incidents_2014_01
+                ORDER BY date
+                LIMIT 5
+              )
+```
+
+* This, for example, returns everything for crimes that occur on the top 5 "most crime" days.
+
+#### Joining sub queries 
+
+* Recall that you can filter queries in join statements. 
+  
+Alternative construction of the above:
+
+```
+SELECT *
+  FROM tutorial.sf_crime_incidents_2014_01 incidents
+  JOIN ( SELECT date
+           FROM tutorial.sf_crime_incidents_2014_01
+          ORDER BY date
+          LIMIT 5
+       ) sub
+    ON incidents.date = sub.date
+```
+
+* Write a query that displays all rows from the three categories with the fewest incidents reported.
+
+* Why doesn't the following work?
+
+```
+SELECT * FROM tutorial.sf_crime_incidents_2014_01 db
+WHERE db.category IN
+(
+  SELECT category, COUNT(incidnt_num) AS incidents 
+  FROM tutorial.sf_crime_incidents_2014_01
+  GROUP BY 1
+  ORDER BY 2
+LIMIT 3 )
+```
+
+* Because the `IN` subquery can only inspect a single column.
+* The results of the subquery are the category as well as a count, so `IN` is not suitable for this exercise.
+* Instead...
+
