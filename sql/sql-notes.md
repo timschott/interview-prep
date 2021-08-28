@@ -1208,3 +1208,36 @@ LIMIT 3 )
 * The results of the subquery are the category as well as a count, so `IN` is not suitable for this exercise.
 * Instead...
 
+```
+SELECT db.* FROM tutorial.sf_crime_incidents_2014_01 db
+JOIN
+(
+  SELECT category, COUNT(incidnt_num) AS incidents 
+  FROM tutorial.sf_crime_incidents_2014_01
+  GROUP BY 1
+  ORDER BY 2
+  LIMIT 3 ) as sub 
+ON db.category = sub.category
+```
+
+* To start, we need to aggregate the categories for the 3 least-committed crime categories
+* This requires grouping by our bucket of interest (`category`), and then counting up how many members are in each group.
+* We then order this and limit it to 3.
+* From there, we have the 'rare 3' we want to see full reports on.
+* Next we move to the outer query. 
+* We want all data, so `SELECT db.*` is a good start.
+* Next, in order to reconcile which rows to pull, we'll do a join.
+  * Find every row whose category = one of the 3 categories in the sub query.
+  * You cannot use a `IN` here.
+  * Reminder, you need that alias on the subquery!
+  
+### Window Functions
+
+* Video break...
+* [techTFQ - Window Functions](https://www.youtube.com/watch?v=Ww71knvhQ-s&ab_channel=techTFQ)
+* This paradigm is necessary when you need to perform specific filtering on subsets of your data
+* "Get the 2 most recent hires from each department"
+* "Get the top 3 earners in each department"
+* "Get the top 3 locations of each crime category"
+
+![rank, dense rank and row number](rank-dense-rank-row-number.png "Rank, Dense Rank and Row Number")
