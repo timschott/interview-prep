@@ -1244,16 +1244,18 @@ ON db.category = sub.category
 
 * Window functions perform calculations across a specific set of table rows
 * Unlike traditional aggregate functions, they *do not* get grouped into a single row
-* For example, looking at `SUM()`, typically, if i do something like `SELECT sum(sales) FROM sales` I will get back a single row that totals up all the sales revenue
+* Looking at `SUM()`, typically if I do something like `SELECT sum(sales) FROM sales` I will get back a single row that totals up all the sales revenue
   * And, we can make that a little more narrow by using a `GROUP BY` -- separating the results based on something like `GROUP BY fiscal_year`
   * In both cases, using a standard aggregate function *reduced* the number of rows returned.
 * With window functions, we can operate on a subset of rows without reducing how much data is returned.
 * Example: `SELECT fiscal_year, SUM(sale) OVER (PARTITION BY fiscal_year) total_sales FROM sales;` 
   * Here, the `SUM()` function is applied as a window over the rows grouped by fiscal_year
-  * Creates a new column called `sum` that contains the sum of sales, group by fiscal_year, and attaches that to every other row the rest of the query that's returned
-  * The **window** is specifically the set of rows that the function touches.
-    * You can define the window using `ORDER` and `PARTITION`
-* Here is an example with `ORDER`: 
+  * Creates a new column called `total_sales`, grouped by fiscal_year, and attaches that to every other row the rest of the query that's returned
+* The **window** is specifically the set of rows that the function touches.
+* The row that the function evaluation is occurring at is called the **current row**
+* They are permitted only in the `SELECT` list and `ORDER BY` clause
+* They are executed after filtering/grouping (where, having, group by) and before order by/limit
+* Here is an example: 
   
 ```
   SELECT duration_seconds,
@@ -1269,3 +1271,52 @@ ds    rt
 ```
 
 * Here, you can see we make an aggregation column (`running_total`) without using `GROUP BY`.
+
+#### Window Function Syntax
+
+```
+window_function_name(expression) OVER ( 
+   [partition_definition]
+   [order_definition]
+   [frame_definition]
+)
+```
+
+* first, specify the function you're using
+* next, load up the `OVER` clause, with:
+  * partition
+    * partition shrinks the window to a subset of individual groups within the table.
+    * `PARTITION BY <expression>[{,<expression>...}]`
+    * you can specify one or more expressions in the `PARTITION BY` clause; separate them with commmas 
+  * order
+    * specifies how rows are ordered *within* a partition
+      * treats every partition as separate
+    * `ORDER BY <expression> [ASC|DESC], [{,<expression>...}]`
+    * it only makes sense to use `ORDER BY` for order-sensitive window functions
+* the parens after the `OVER` clause are mandatory, even with no expression
+* Example: 
+```
+SELECT start_terminal,
+       duration_seconds,
+       SUM(duration_seconds) OVER
+         (PARTITION BY start_terminal ORDER BY start_time)
+         AS running_total
+  FROM tutorial.dc_bikeshare_q1_2012
+ WHERE start_time < '2012-01-08'
+```
+
+* why is there a `PARTITION BY`?
+  * Using a partition groups and orders the query by  `start_terminal`
+    * if you were to remove the `PARTITION BY`, you would just be looking at the sum of duration_seconds across the entire table
+    * because you have not shrunk the window at all
+    * this means that your column would just be the same, total accumulation numbber
+* why is there an `ORDER BY`?
+  * remember the function here, sum, is being invoked against whatever "window" you provide it
+  * if the results are not ordered in any meaningful sense, then there is not enough information to provide a "running total"
+  * so instead, the total-per-partition is placed in the column
+* overall: 
+* 1. partition by splits our window into smaller pieces
+* 2. order by allows us to order the data in the window before the function is applied
+
+Write a query modification of the above example query that shows the duration of each ride as a percentage of the total time accrued by riders from each start_terminal
+
