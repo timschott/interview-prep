@@ -1241,3 +1241,29 @@ ON db.category = sub.category
 * "Get the top 3 locations of each crime category"
 
 ![rank, dense rank and row number](rank-dense-rank-row-number.png "Rank, Dense Rank and Row Number")
+
+* Window functions perform calculations across a specific set of table rows
+* Unlike traditional aggregate functions, they *do not* get grouped into a single row
+* For example, looking at `SUM()`, typically, if i do something like `SELECT sum(sales) FROM sales` I will get back a single row that totals up all the sales revenue
+  * And, we can make that a little more narrow by using a `GROUP BY` -- separating the results based on something like `GROUP BY fiscal_year`
+  * In both cases, using a standard aggregate function *reduced* the number of rows returned.
+* With window functions, we can operate on a subset of rows without reducing how much data is returned.
+* Example: `SELECT fiscal_year, SUM(sale) OVER (PARTITION BY fiscal_year) total_sales FROM sales;` 
+  * Here, the `SUM()` function is applied as a window over the rows grouped by fiscal_year
+  * Creates a new column called `sum` that contains the sum of sales, group by fiscal_year, and attaches that to every other row the rest of the query that's returned
+  * The **window** is specifically the set of rows that the function touches.
+    * You can define the window using `ORDER` and `PARTITION`
+* Here is an example with `ORDER`: 
+  ```
+  SELECT duration_seconds,
+       SUM(duration_seconds) OVER (ORDER BY start_time) AS running_total
+  FROM tutorial.dc_bikeshare_q1_2012
+
+ds    rt
+475	  475
+1162	1637
+1145	2782
+485	  3738
+
+  ```
+* Here, you can see we make an aggregation column (`running_total`) without using `GROUP BY`.
