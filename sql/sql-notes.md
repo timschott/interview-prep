@@ -1254,7 +1254,8 @@ ON db.category = sub.category
   * The **window** is specifically the set of rows that the function touches.
     * You can define the window using `ORDER` and `PARTITION`
 * Here is an example with `ORDER`: 
-  ```
+  
+```
   SELECT duration_seconds,
        SUM(duration_seconds) OVER (ORDER BY start_time) AS running_total
   FROM tutorial.dc_bikeshare_q1_2012
@@ -1265,5 +1266,6 @@ ds    rt
 1145	2782
 485	  3738
 
-  ```
+```
+
 * Here, you can see we make an aggregation column (`running_total`) without using `GROUP BY`.
