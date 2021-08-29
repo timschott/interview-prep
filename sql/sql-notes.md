@@ -1320,3 +1320,74 @@ SELECT start_terminal,
 
 Write a query modification of the above example query that shows the duration of each ride as a percentage of the total time accrued by riders from each start_terminal
 
+Use 2 different window functions - one to get the sum per terminal, and 1 to get the percentage of one ride's duration out of that total.
+
+```
+SELECT
+       duration_seconds,
+       (duration_seconds/SUM(duration_seconds) OVER (PARTITION BY start_terminal))*100 AS pct_of_total_time
+  FROM tutorial.dc_bikeshare_q1_2012
+ WHERE start_time < '2012-01-08'
+ ORDER BY 2 DESC
+```
+We *know* that `SUM(duration_seconds) OVER (PARTITION BY start_terminal)` is equal to the sum per terminal.
+We *also know* that we are looking for a percent - the value in an individual row divided by that sum.
+So, this query achieves the result by just recalculate that value. 
+Just calculate again! 
+
+#### What functions can we use in Window-World?
+
+* `SUM`
+* `COUNT`
+* `AVERAGE`
+* Recall the partition + group combination required to achieve a "running total" - that same pattern could also be used for a running count or a running average!
+
+Write a query that shows a running total of the duration of bike rides (similar to the last example), but grouped by end_terminal, and with ride duration sorted in descending order.
+
+```
+SELECT 
+end_terminal,
+duration_seconds,
+SUM(duration_seconds) OVER (PARTITION BY end_terminal ORDER BY duration_seconds DESC) as running_total
+FROM tutorial.dc_bikeshare_q1_2012
+```
+
+What sticks out in this example is that the `ORDER BY duration_seconds DESC` gets applied to the whole partion - as in, when you want to also update how your partition is displayed, that is where you want to put the `ORDER BY`. If you put it all the way at the end of the query after the `FROM` you're not going to achieve the same result (clustered/sorted within a partition)
+
+* `ROW_NUMBER()`
+  * allows you to display a row number
+  * starts at 1
+  * you can combine with partition to count instances in the group
+  * req
+* `RANK`
+  * rank checks for a comparison within the row
+  * you can combine it with an order by to enforce a specific sequence
+  * resolves identical start times "contest" style
+  * i.e. if there are 2 second place answer, they are both given a rank of 3, and then the following result receives a rank of 6
+    * this leads to a "gap" in the rankings (there is no 3rd place)
+* `DENSE_RANK`
+  * like rank, gives identical rows identical values
+  * but the following row doesn't skip
+  * so there are no "gaps" in the rankings
+  
+Write a query that shows the 5 longest rides from each starting terminal, ordered by terminal, and longest to shortest rides within each terminal. Limit to rides that occurred before Jan. 8, 2012.
+
+```
+SELECT * from (
+SELECT start_terminal,
+       duration_seconds,
+       RANK() OVER (PARTITION BY start_terminal ORDER BY duration_seconds DESC)
+  FROM tutorial.dc_bikeshare_q1_2012
+ WHERE start_time < '2012-01-08'
+ ) sub
+ WHERE sub.rank < 6
+```
+
+* to satisfy "from each starting terminal", we have the partition
+* to satisfy "ordered by terminal", we have the partition
+* to satisfy "longest to shortest rides within each terminal", we have the ORDER BY 
+* to satisfy top 5, we use a sub query
+* **Rank should be used with `ORDER BY`**
+* because then how else is it supposed to know what the criteria is to rank by?
+  * [docs](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_rank) - without `ORDER BY`, all rows are peers.
+
