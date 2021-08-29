@@ -1335,7 +1335,7 @@ We *also know* that we are looking for a percent - the value in an individual ro
 So, this query achieves the result by just recalculate that value. 
 Just calculate again! 
 
-#### What functions can we use in Window-World?
+#### Sum, Count and Average
 
 * `SUM`
 * `COUNT`
@@ -1353,6 +1353,8 @@ FROM tutorial.dc_bikeshare_q1_2012
 ```
 
 What sticks out in this example is that the `ORDER BY duration_seconds DESC` gets applied to the whole partion - as in, when you want to also update how your partition is displayed, that is where you want to put the `ORDER BY`. If you put it all the way at the end of the query after the `FROM` you're not going to achieve the same result (clustered/sorted within a partition)
+
+#### Row Number, Rank and Dense Rank
 
 * `ROW_NUMBER()`
   * allows you to display a row number
@@ -1391,3 +1393,59 @@ SELECT start_terminal,
 * because then how else is it supposed to know what the criteria is to rank by?
   * [docs](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_rank) - without `ORDER BY`, all rows are peers.
 
+#### N-Tile
+
+* `NTILE(n)`
+  * used to identify what percentile a given row falls into
+  * the bucket number is in the range from 1 to n.
+    * if the number of partition rows doesn't divide evenly by `n`, the function will result in groups of two sizes with the difference bt one
+  * the function should be used with `ORDER BY` to sort partition rows into the desired order.
+  
+  Write a query that shows only the duration of the trip and the percentile into which that duration falls (across the entire dataset—not partitioned by terminal).
+
+```
+SELECT 
+duration_seconds,
+NTILE(100) OVER (ORDER BY duration_seconds)
+FROM tutorial.dc_bikeshare_q1_2012
+ORDER BY 1 DESC
+```
+
+Fairly straightforward. Note that the biggest numbers will be in the 100th percentile here so that's why we have a double `ORDER BY` - to show those first (`ORDER BY 1 DESC`).
+
+#### Lag and Lead
+
+* `LAG` and `LEAD` can be used to pull value from other rows
+  * `LAG` pulls from prior rows
+  * `LEAD` pulls from following rows
+* Useful for doing something like calculating a running-difference
+
+```
+SELECT start_terminal,
+       duration_seconds,
+       duration_seconds - LAG(duration_seconds, 1) OVER
+         (PARTITION BY start_terminal ORDER BY duration_seconds)
+         AS difference
+  FROM tutorial.dc_bikeshare_q1_2012
+ WHERE start_time < '2012-01-08'
+ ORDER BY start_terminal, duration_seconds
+```
+
+#### Window Alias
+
+* You can reuse a window with an alias
+
+```
+SELECT start_terminal,
+       duration_seconds,
+       NTILE(4) OVER ntile_window AS quartile,
+       NTILE(5) OVER ntile_window AS quintile,
+       NTILE(100) OVER ntile_window AS percentile
+  FROM tutorial.dc_bikeshare_q1_2012
+ WHERE start_time < '2012-01-08'
+WINDOW ntile_window AS
+         (PARTITION BY start_terminal ORDER BY duration_seconds)
+ ORDER BY start_terminal, duration_seconds
+```
+
+* Place it after the where clause
