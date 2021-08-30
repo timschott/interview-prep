@@ -1418,6 +1418,14 @@ Fairly straightforward. Note that the biggest numbers will be in the 100th perce
 * `LAG` and `LEAD` can be used to pull value from other rows
   * `LAG` pulls from prior rows
   * `LEAD` pulls from following rows
+* You can customize the offset to change what other row it compares to the current row
+* Syntax: `LAG(column_name, offset)`
+```
+    LAG(order_value, 1) OVER (
+        PARTITION BY productLine
+        ORDER BY order_year
+    ) as prev_year_order_value
+```
 * Useful for doing something like calculating a running-difference
 
 ```
@@ -1449,3 +1457,57 @@ WINDOW ntile_window AS
 ```
 
 * Place it after the where clause
+
+### Various
+
+#### Common Table Expression
+
+* You can use `WITH` to reserve a large temporary result set at the top of your work
+* This is known as a **common table expression**
+* It differs from a subquery (aka derived table) because:
+  * not stored as an object
+  * lasts only during the execution of a query
+  * . so, could be used to inc. perf of a large subquery-reliant operation
+  * can also be self-referencing (recursive ...)
+* Syntax:
+```
+WITH cte_name () AS (
+    query
+) 
+SELECT * FROM cte_name;
+```
+* Example:
+```
+WITH customers_in_usa AS (
+    SELECT 
+        customerName, state
+    FROM
+        customers
+    WHERE
+        country = 'USA'
+) SELECT 
+    customerName
+ FROM
+    customers_in_usa
+ WHERE
+    state = 'CA'
+ ORDER BY customerName;
+```
+* the name of the CTE is `customers_in_usa`
+* it returns two columns: `customerName` and `state`
+* after its executed, we'll invoke it in the outer query, and filter our data based on its state values.
+
+#### Views
+
+* When you are repeatedly executing the same large query, you can see bad performance
+* You can use a **view** (aka virtual table) to reserve a result set for repeated use
+  * simplifies complex queries
+    * just `select * from my_view`
+  * makes business logic consistent and clean
+    * less typo risk
+  * less exposure of back-end logic for increased security
+  * decrease reliance on a calculated, out of date local file
+    * ie calculate payment data on the fly, not based off some csv you have saved
+* syntax is simple: 
+  * `CREATE VIEW view_name AS ... `
+  * `SELECT * FROM view_name`

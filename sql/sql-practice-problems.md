@@ -186,3 +186,12 @@ limit 1;
 4. limit of 1 grabs the max
 
 this pattern - order by something desc and limit to 1 is a great way to get a maximum value without having to use the `MAX` function.
+
+## Leetcode 184: Department Highest Salary
+https://leetcode.com/problems/department-highest-salary/problem
+
+What stood out in this problem is that you might be tempted to use `MAX` at some point. But you don't really care what the actual maximum value is. You want to see who earns it. That's why using `RANK` is correct. This problem added slight complexity by making you perform a `JOIN` prior to being able to tabulate your results.
+
+I used a window operation, `RANK() OVER (Partition By d.Name Order By e.Salary DESC) as r` and sub-query / where to see who has that rank of 1. 
+
+
