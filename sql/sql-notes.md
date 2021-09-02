@@ -1511,3 +1511,10 @@ WITH customers_in_usa AS (
 * syntax is simple: 
   * `CREATE VIEW view_name AS ... `
   * `SELECT * FROM view_name`
+
+### Various
+
+* Things I come across that I should have written down.
+* Absolute Value in SQL:
+  * `abs()`.
+* 
