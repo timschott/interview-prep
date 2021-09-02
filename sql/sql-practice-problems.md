@@ -194,4 +194,19 @@ What stood out in this problem is that you might be tempted to use `MAX` at some
 
 I used a window operation, `RANK() OVER (Partition By d.Name Order By e.Salary DESC) as r` and sub-query / where to see who has that rank of 1. 
 
+## First day of stratascratch....
+
+## Salaries Differences
+
+https://platform.stratascratch.com/coding/10308-salaries-differences
+
+Write a query that calculates the difference between the highest salaries found in the marketing and engineering departments. Output just the difference in salaries.
+
+* I way over did this ...
+* what's important to realize here is that the maximum salary for 1 department vs another is just comparing numbers. so it makes sense 
+* there isn't need to any aggregation because we can directly calculate the value from the table
+* this means forget your window functions, just cook with the basics
+* it's important to break down the problem into smaller parts, and then do the generalizing later.
+* i was on a better track when i tried out the union part. 
+
 
