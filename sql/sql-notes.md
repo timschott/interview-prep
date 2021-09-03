@@ -1517,4 +1517,8 @@ WITH customers_in_usa AS (
 * Things I come across that I should have written down.
 * Absolute Value in SQL:
   * `abs()`.
-* 
+* In general, one good deduping strategy is to use the `row_number()` window function
+  * apply a row number to everything, ordering by some partition that's going duplicate data for you
+  * e.g. `row_number over (partition by employee_id) as rn`
+  * then, use a sub query, and only draw rows that have a row number = to 1.
+  * its robust to shifts in the data because its always going to recalculate, vs. if you're just grouping on a bunch of putatively duplicated columns that could potentially change in the future
