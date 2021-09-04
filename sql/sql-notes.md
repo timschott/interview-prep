@@ -1522,3 +1522,17 @@ WITH customers_in_usa AS (
   * e.g. `row_number over (partition by employee_id) as rn`
   * then, use a sub query, and only draw rows that have a row number = to 1.
   * its robust to shifts in the data because its always going to recalculate, vs. if you're just grouping on a bunch of putatively duplicated columns that could potentially change in the future
+  * Remember that the partition by / group by scheme is necessary to create a *rolling* average. 
+    * In some instances, you are okay with attaching the average, at large, total to each row
+
+```
+select department, first_name, salary,
+avg(salary) over (partition by department) as avg
+from employee
+```
+
+* Here, I just want every employee next to the average of their department salary
+* Adding a `order by salary desc` messes with the calculation because the average is now required to look at rows one at a time, instead of all the rows in the partition at once.
+* Don't be afraid to group by more than one attribute.
+  * For example, when you group by employee id, but also need to return the employees name, you also need to group by the name -- it won't change anything in the output, since id is the PK, but its what you have to do for the aggregation to function properly.
+* 
