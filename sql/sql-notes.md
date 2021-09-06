@@ -1535,4 +1535,16 @@ from employee
 * Adding a `order by salary desc` messes with the calculation because the average is now required to look at rows one at a time, instead of all the rows in the partition at once.
 * Don't be afraid to group by more than one attribute.
   * For example, when you group by employee id, but also need to return the employees name, you also need to group by the name -- it won't change anything in the output, since id is the PK, but its what you have to do for the aggregation to function properly.
+* Recall `Having`...
+  * to be used when we want to filter out something that is grouped
+
+```
+select neighbourhood, avg(beds) as avg_beds
+from airbnb_search_details
+group by neighbourhood
+having sum(beds) >= 3
+order by avg_beds desc
+```
+
+* Note that here, I can't use a where clause because I want to filter out results after they have been aggregated.
 * 
