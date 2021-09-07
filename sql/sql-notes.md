@@ -1547,4 +1547,8 @@ order by avg_beds desc
 ```
 
 * Note that here, I can't use a where clause because I want to filter out results after they have been aggregated.
-* 
+* If you are carrying out integer division, you might get just 0 back
+  * like, 2/7 is 0.
+  * to cast it as a decimal on the fly, multiply something by 1.0
+  * `2 * 1.0 / 5 = 0.4` as expected.
+  * 
