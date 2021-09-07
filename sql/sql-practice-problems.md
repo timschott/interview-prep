@@ -209,4 +209,40 @@ Write a query that calculates the difference between the highest salaries found 
 * it's important to break down the problem into smaller parts, and then do the generalizing later.
 * i was on a better track when i tried out the union part. 
 
+## Acceptance Rate by Date
+
+https://platform.stratascratch.com/coding/10285-acceptance-rate-by-date
+
+Acceptance Rate By Date
+What is the overall friend acceptance rate by date? Your output should have the rate of acceptances by the date the request was sent. Order by the earliest date to latest.
+
+```
+with success_table as
+(select f1.user_id_sender, f1.user_id_receiver, f1.date, f1.action as a1, f2.action as a2
+from fb_friend_requests f1
+join 
+fb_friend_requests f2
+on f1.user_id_sender = f2.user_id_sender
+where f1.action = 'sent' and f2.action = 'accepted'
+),
+
+accept_date_and_freq as (
+select date, count (a2) from success_table
+group by date ),
+
+total_table as (
+select date,
+count (action)
+from fb_friend_requests
+where action = 'sent'
+group by date
+)
+
+select a.date, 1.0 * a.count / t.count as percentage_acceptance from 
+accept_date_and_freq a
+join
+total_table t
+on 
+a.date = t.date
+```
 

@@ -1517,11 +1517,15 @@ WITH customers_in_usa AS (
 * Things I come across that I should have written down.
 * Absolute Value in SQL:
   * `abs()`.
+
+
 * In general, one good deduping strategy is to use the `row_number()` window function
   * apply a row number to everything, ordering by some partition that's going duplicate data for you
   * e.g. `row_number over (partition by employee_id) as rn`
   * then, use a sub query, and only draw rows that have a row number = to 1.
   * its robust to shifts in the data because its always going to recalculate, vs. if you're just grouping on a bunch of putatively duplicated columns that could potentially change in the future
+
+
   * Remember that the partition by / group by scheme is necessary to create a *rolling* average. 
     * In some instances, you are okay with attaching the average, at large, total to each row
 
@@ -1535,6 +1539,7 @@ from employee
 * Adding a `order by salary desc` messes with the calculation because the average is now required to look at rows one at a time, instead of all the rows in the partition at once.
 * Don't be afraid to group by more than one attribute.
   * For example, when you group by employee id, but also need to return the employees name, you also need to group by the name -- it won't change anything in the output, since id is the PK, but its what you have to do for the aggregation to function properly.
+
 * Recall `Having`...
   * to be used when we want to filter out something that is grouped
 
@@ -1547,8 +1552,37 @@ order by avg_beds desc
 ```
 
 * Note that here, I can't use a where clause because I want to filter out results after they have been aggregated.
+
+
 * If you are carrying out integer division, you might get just 0 back
   * like, 2/7 is 0.
   * to cast it as a decimal on the fly, multiply something by 1.0
   * `2 * 1.0 / 5 = 0.4` as expected.
-  * 
+
+* In cases where you want to have a maximum within a group, it can make sense to use `RANK`.
+
+```
+WITH sub as (select * from fb_eu_energy
+UNION
+select * from fb_asia_energy
+UNION
+select * from fb_na_energy 
+)
+
+select s2.date, s2.total_energy from (
+select date,
+sum(consumption) as total_energy, 
+rank() over( order by sum(consumption) desc) as r
+from sub
+group by date
+order by total_energy desc ) s2
+where s2.r = 1
+```
+
+* Notice that here, I don't partition in the window function
+* That's because I am already applying a group by because there is more than one row per actual date in the table
+  * it all depends on how your data is laid out
+* also notice that I'm not using `MAX` here.
+  * instead, i am just ordering by a sum, ranking by that same criteria, and then pulling out those rows with rank of 1
+  * this is actually more robust for future querying because it could easily support doing a top 5.
+* also, look at the CTE - hiking it into a sub query can make it more readable!
