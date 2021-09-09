@@ -1586,3 +1586,71 @@ where s2.r = 1
   * instead, i am just ordering by a sum, ranking by that same criteria, and then pulling out those rows with rank of 1
   * this is actually more robust for future querying because it could easily support doing a top 5.
 * also, look at the CTE - hiking it into a sub query can make it more readable!
+
+
+* Date refresher....
+  * we have different "formats"
+  * `DATE` YYYY-MM-DD
+  * `DATETIME` YYYY-MM-DD HH:MI:SS
+  * `TIMESTAMP` YYYY-MM-DD HH:MI:SS
+  * `YEAR` YYYY
+  * What is the difference between datetime and timestamp?
+    * TIMESTAMPs can be configured into a specific time zone
+    * DATETIME, then, is constant
+    * overall, it's a much more elegant solution to just store items in UTC and then convert them on the front-end
+      * ...rather than, like, setting the timezone for your db (?)
+    * another solution - don't use these at all, just store milliseconds and then convert them in java or whatever
+  * if you try to put a 2-digit year value, its ambiguous to sql (bad)
+  * remember our useful "calendar" hooks:
+    * `MONTH()` & `MONTHNAME()`
+    * `CURDATE()`
+    * `YEAR()`
+  * example: get all orders from november, using `MONTHNAME()`
+    * `SELECT * FROM orders WHERE MONTHNAME(order_delivery) = 'November';`
+  * you can also use the `BETWEEN` clause and look at a range within two dates
+    * (or outside of it... subquery / not in)
+* Direct subtraction is very handy for dates.
+* DateFuture - DatePast is how many days are in between them.
+* `end_date - start_date as duration`
+
+* remember the CTE syntax
+
+```
+with [cte_1_name] as (
+  blah blah
+),
+with [cte_2_name] as (
+  blah blah
+)
+
+select * from cte_1_name union cte_2_name
+```
+
+* note the comma in between statements
+* but not once you are all finished up.
+
+* To get the nearest integer above a number...
+* `CEILING()`.
+
+* Difference between union and union all?
+  * union removes duplicate rows
+  * union all does not.
+    * thus union is going to be slower!
+
+* Double join
+  * i.e., what to do when you have a go between table.
+  * lets say 
+  * linkedin_projects has the project id
+  * linkedin_employees has the employee id
+  * linkedin_emp_projects contains
+    * emp_id
+    * project_id
+  * now you want to smush it all....
+  * just join on the equal ids 
+
+```
+select *
+from linkedin_projects p
+JOIN linkedin_emp_projects emp_proj ON  p.id=emp_proj.project_id 
+JOIN linkedin_employees e on emp_proj.emp_id=e.id
+```
