@@ -1614,12 +1614,14 @@ where s2.r = 1
 * `end_date - start_date as duration`
 
 * remember the CTE syntax
+* only need one with!!
 
 ```
 with [cte_1_name] as (
   blah blah
 ),
-with [cte_2_name] as (
+
+cte_2_name] as (
   blah blah
 )
 
