@@ -1656,3 +1656,20 @@ from linkedin_projects p
 JOIN linkedin_emp_projects emp_proj ON  p.id=emp_proj.project_id 
 JOIN linkedin_employees e on emp_proj.emp_id=e.id
 ```
+
+* `CROSS JOIN` - do you remember that?
+* it takes the cartesian product of table a and table b.
+* no arguments needed.
+* now..... if i have an M x N table, and i have a single scalar (ie a number)....
+  * if you take the cartesian against that single value, it's just going to scale on the outside
+  * its the equivalent of like "paste(2, [n number of times])" as a new column
+  * super handy!
+
+```
+select user1 as userid, (sum/count) * 100.0 as popularity from user_and_friend_count
+cross join
+user_total
+order by userid
+```
+
+* where `user_total` was just a single number (9).
