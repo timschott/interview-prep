@@ -1610,8 +1610,13 @@ where s2.r = 1
   * you can also use the `BETWEEN` clause and look at a range within two dates
     * (or outside of it... subquery / not in)
 * Direct subtraction is very handy for dates.
-* DateFuture - DatePast is how many days are in between them.
+* DateFuture - DatePast is how many x are in between them.
+  * what you get back depends how granular of information there is
+    * YYYY-MM-DD subtraction will give you # of days
 * `end_date - start_date as duration`
+* Get the day of the week (as a number) from a date
+* use `EXTRACT(dow from date_col)`
+  * other args include month, milliseconds, year
 
 * remember the CTE syntax
 * only need one with!!
@@ -1673,3 +1678,8 @@ order by userid
 ```
 
 * where `user_total` was just a single number (9).
+
+* an alternative to using `ILIKE` is hitting the column of interest with a `lower()` prior to checking it
+  * `WHEN lower(business_name) LIKE '%cafe%' THEN 'cafe'`
+* also remember you can't have a `|` regex for a like statement, you need to chain `or`'s
+
