@@ -1683,3 +1683,16 @@ order by userid
   * `WHEN lower(business_name) LIKE '%cafe%' THEN 'cafe'`
 * also remember you can't have a `|` regex for a like statement, you need to chain `or`'s
 
+* remember, you can put 2 counts directly next to each other in a select statement, and even put them into a percentage right there.
+* `select (count(fb2.phone_number)/count(fb1.phone_number)) * 100.0 as percentage`
+* ie `select (stuff i care about [math] other stuff i care about) [more math] as value)`
+
+* remember that you can directly run a subquery in a where clause
+
+```
+select business_name, review_text from yelp_reviews
+where cool = (select max(cool) from yelp_reviews);
+```
+
+* this can save a CTE and also is clean to follow.
+
