@@ -1695,4 +1695,5 @@ where cool = (select max(cool) from yelp_reviews);
 ```
 
 * this can save a CTE and also is clean to follow.
-
+* useful for operations like, "give me everyone who makes X salary"
+  * can directly query in the where, just make sure the value is an ordinal
