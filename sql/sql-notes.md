@@ -1512,12 +1512,13 @@ WITH customers_in_usa AS (
   * `CREATE VIEW view_name AS ... `
   * `SELECT * FROM view_name`
 
-### Various
+### Various - 2
 
 * Things I come across that I should have written down.
 * Absolute Value in SQL:
   * `abs()`.
 
+#### Deduping with Row Number
 
 * In general, one good deduping strategy is to use the `row_number()` window function
   * apply a row number to everything, ordering by some partition that's going duplicate data for you
@@ -1553,6 +1554,7 @@ order by avg_beds desc
 
 * Note that here, I can't use a where clause because I want to filter out results after they have been aggregated.
 
+#### hit division with a `.0`
 
 * If you are carrying out integer division, you might get just 0 back
   * like, 2/7 is 0.
@@ -1587,6 +1589,7 @@ where s2.r = 1
   * this is actually more robust for future querying because it could easily support doing a top 5.
 * also, look at the CTE - hiking it into a sub query can make it more readable!
 
+#### Date Refresher
 
 * Date refresher....
   * we have different "formats"
@@ -1615,8 +1618,10 @@ where s2.r = 1
     * YYYY-MM-DD subtraction will give you # of days
 * `end_date - start_date as duration`
 * Get the day of the week (as a number) from a date
-* use `EXTRACT(dow from date_col)`
+* (in postgres) use `EXTRACT(dow from date_col)`
   * other args include month, milliseconds, year
+
+#### CTE Syntax 
 
 * remember the CTE syntax
 * only need one with!!
@@ -1639,10 +1644,13 @@ select * from cte_1_name union cte_2_name
 * To get the nearest integer above a number...
 * `CEILING()`.
 
+#### Union vs Union All 
 * Difference between union and union all?
   * union removes duplicate rows
   * union all does not.
     * thus union is going to be slower!
+
+#### How to Handle a "go between table" w/ 2 fk's
 
 * Double join
   * i.e., what to do when you have a go between table.
@@ -1662,8 +1670,11 @@ JOIN linkedin_emp_projects emp_proj ON  p.id=emp_proj.project_id
 JOIN linkedin_employees e on emp_proj.emp_id=e.id
 ```
 
+#### Cross Join
+
 * `CROSS JOIN` - do you remember that?
 * it takes the cartesian product of table a and table b.
+* (tantamount to cross product of 2 matrices).
 * no arguments needed.
 * now..... if i have an M x N table, and i have a single scalar (ie a number)....
   * if you take the cartesian against that single value, it's just going to scale on the outside
@@ -1679,6 +1690,7 @@ order by userid
 
 * where `user_total` was just a single number (9).
 
+#### ILIKE and lower
 * an alternative to using `ILIKE` is hitting the column of interest with a `lower()` prior to checking it
   * `WHEN lower(business_name) LIKE '%cafe%' THEN 'cafe'`
 * also remember you can't have a `|` regex for a like statement, you need to chain `or`'s
@@ -1687,6 +1699,7 @@ order by userid
 * `select (count(fb2.phone_number)/count(fb1.phone_number)) * 100.0 as percentage`
 * ie `select (stuff i care about [math] other stuff i care about) [more math] as value)`
 
+#### Subquery in a Where Clause
 * remember that you can directly run a subquery in a where clause
 
 ```
@@ -1697,3 +1710,52 @@ where cool = (select max(cool) from yelp_reviews);
 * this can save a CTE and also is clean to follow.
 * useful for operations like, "give me everyone who makes X salary"
   * can directly query in the where, just make sure the value is an ordinal
+
+### Create Table
+
+* `create table [table name]` ...
+
+```
+CREATE TABLE Persons (
+    PersonId int NOT NULL,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255),
+    PRIMARY KEY (ID)
+);
+```
+
+* note how i can make something a primary key.
+* can do this after that fact w/ `ALTER TABLE`.
+
+### Insert
+
+* `insert into [table name] [columns] values` ...
+
+```
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+```
+
+* If you are adding values for all the columns of the table, you do not need to specify the column names in the SQL query.
+
+### Elegant Ratio
+
+```
+select f1.post_date, count(case when f1.post_keywords like '%spam%' then 1 else null end) * 1.0
+/ count(f2.post_id) as spam_share
+from facebook_posts f1
+group by f1.post_date
+```
+
+* We know, essentially, that we want to count something and divide by its total.
+* In this case, the criteria is 'spam posts,' and so we are looking for posts w/ spam in the keywords field.
+* Now, in order to do this in oneline, you can
+  * establish base criteria
+    * case when spam, 1
+    * else null 
+  * now, we would just have that as a column... but we want to aggregate that as well 
+  * so, let's just directly `count` how many exist!
+    * that's why we set null as the else case
+  * 
