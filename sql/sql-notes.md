@@ -1460,13 +1460,14 @@ WINDOW ntile_window AS
 
 ### Various
 
-#### Common Table Expression
+#### Common Table Expression - CTE
 
 * You can use `WITH` to reserve a large temporary result set at the top of your work
 * This is known as a **common table expression**
 * It differs from a subquery (aka derived table) because:
   * not stored as an object
   * lasts only during the execution of a query
+  * for this reason, it's called a "disposable" view because it only lasts for the execution time of your query
   * . so, could be used to inc. perf of a large subquery-reliant operation
   * can also be self-referencing (recursive ...)
 * Syntax:
@@ -1497,6 +1498,30 @@ WITH customers_in_usa AS (
 * it returns two columns: `customerName` and `state`
 * after its executed, we'll invoke it in the outer query, and filter our data based on its state values.
 
+* beneficial because it can be invoked recursively
+  * unlike views, which cannot be invoked recursively.
+
+* remember the CTE syntax
+* only need one with!!
+
+```
+with [cte_1_name] as (
+  blah blah
+),
+
+cte_2_name] as (
+  blah blah
+)
+
+select * from cte_1_name union cte_2_name
+```
+
+* note the comma in between statements
+* but not once you are all finished up.
+
+* To get the nearest integer above a number...
+* `CEILING()`.
+
 #### Views
 
 * When you are repeatedly executing the same large query, you can see bad performance
@@ -1508,6 +1533,7 @@ WITH customers_in_usa AS (
   * less exposure of back-end logic for increased security
   * decrease reliance on a calculated, out of date local file
     * ie calculate payment data on the fly, not based off some csv you have saved
+  * the data is *always* up to date because its *always* recalculated!
 * syntax is simple: 
   * `CREATE VIEW view_name AS ... `
   * `SELECT * FROM view_name`
@@ -1621,29 +1647,6 @@ where s2.r = 1
 * (in postgres) use `EXTRACT(dow from date_col)`
   * other args include month, milliseconds, year
 
-#### CTE Syntax 
-
-* remember the CTE syntax
-* only need one with!!
-
-```
-with [cte_1_name] as (
-  blah blah
-),
-
-cte_2_name] as (
-  blah blah
-)
-
-select * from cte_1_name union cte_2_name
-```
-
-* note the comma in between statements
-* but not once you are all finished up.
-
-* To get the nearest integer above a number...
-* `CEILING()`.
-
 #### Union vs Union All 
 * Difference between union and union all?
   * union removes duplicate rows
@@ -1740,6 +1743,14 @@ VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway
 
 * If you are adding values for all the columns of the table, you do not need to specify the column names in the SQL query.
 
+### Alter
+
+* You can use this to add, delete or modify entire columns.
+* `ALTER TABLE table_name ADD column_name datatype`
+* `ALTER TABLE table_name ADD column_name DEFAULT(2)`
+  * would attach a 2 to every row
+* 
+
 ### Elegant Ratio
 
 ```
@@ -1771,3 +1782,8 @@ group by f1.post_date
 
 * note that you have to use `string_to_array` or else it won't work.
 
+### Index
+
+* indexes are used to efficiently retrieve data from the table
+* they speed up retrieval and queries
+* 
