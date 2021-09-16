@@ -1758,4 +1758,16 @@ group by f1.post_date
   * now, we would just have that as a column... but we want to aggregate that as well 
   * so, let's just directly `count` how many exist!
     * that's why we set null as the else case
-  * 
+
+
+### Unnest
+
+* have never heard of this before
+* a way to split a column on a delimeter
+* e.g. Sushi;New American;Casual into 3 separate values
+* note that this gives you back the new set as a big column so  you can't just directly append it onto your data
+
+`SELECT unnest(string_to_array(categories, ';')) AS category`
+
+* note that you have to use `string_to_array` or else it won't work.
+
