@@ -31,11 +31,11 @@ Should be able to do in Python or R (base R with tiny bit of dplyr, and then pan
   * equiv on sql join
 * stack two data sets
   * equiv of sql union
-* standardize a column
-  * where standardize = subtract mean and divide by std.dev
 
 ## Stats-Dev
 
+* standardize a column
+  * where standardize = subtract mean and divide by std.dev
 * looking at relationships between variables
   * correlation overall
   * correlation given specific conditions

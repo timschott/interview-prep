@@ -43,11 +43,12 @@ weekdays(base_date[1]) # Sunday
 ## Okay, so let's say I want to keep the time. 
 ## It's easiest to do that by setting the column to be POSIXct and then
 ## converting back to date when you need just the year part.
+## https://www.neonscience.org/resources/learning-hub/tutorials/dc-convert-date-time-posix-r
 
 bike_data$start_date <- as.POSIXct(bike_data$start_date)
 bike_data$end_date <- as.POSIXct(bike_data$end_date)
 
-### inspect beginning of data set
+## inspect beginning of data set
 
 head(bike_data)
 
@@ -112,6 +113,7 @@ sorted_bike_data <- bike_data[order(bike_data$ride_cost, -bike_data$End.station.
 # newdata <- mtcars[order(mpg, -cyl),]
 
 ### Aggregations... 
+### https://www.guru99.com/r-aggregate-function.html
 ### count the number of times a ride cost 4.00
 ### verbose
 length(bike_data[bike_data$ride_cost == 4.00,]$ID) # 662
@@ -159,3 +161,35 @@ carrier_count <- flights %>%
 
 ## as you can see, dplyr has a pretty fluid api 
 
+### Stats ### <- 
+
+### first, lets add another column.. lets make a "distance" column.
+bike_data$distance <- runif(length(bike_data$ID), 0, 25)
+### now, standardize
+bike_data$distance <- scale(bike_data$distance) 
+
+mean(bike_data$distance) # 0
+sd(bike_data$distance) # 1
+
+### Let's load in the mtcars dataset for the next part, because it has more numeric fields.
+data("mtcars")
+
+### correlation, for everything
+c <- as.data.frame(cor(mtcars))
+
+### just between mpg and cyl
+  mtcars %>%
+    select(mpg, cyl, hp) %>%
+    summarize(r = cor(mpg, cyl))
+
+### remove data that is too highly correlated.
+for (i in 1:nrow(c)) {
+  for (j in 1:ncol(c)) {
+    if (upper.tri(c)[i,j] & abs(c[i, j]) > .80) {
+      cat(sprintf("%s %s %s \n", row.names(c)[i], row.names(c)[j], round(abs(c[i, j]), 2)))
+    }
+  }
+}
+
+
+      
