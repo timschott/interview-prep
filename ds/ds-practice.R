@@ -2,6 +2,7 @@
 
 ## Load Data
 
+set.seed(101)
 bike_data <- read.csv("data/2017Q1-capitalbikeshare-tripdata.csv") # df
 
 ## Explore Data
@@ -127,7 +128,7 @@ length(unique(bike_data$End.station)) # 452
 library(dplyr)
 library(nycflights13)
 ### average ride cost
-summarize(bike_data, mean_cost = mean(ride_cost))
+summarize(bike_data, mean_cost = mean(bike_data$ride_cost))
 
 ### okay... what about average ride cost per end station, sorted highest to low.
 bike_data %>% # take bike data
@@ -161,11 +162,12 @@ carrier_count <- flights %>%
 
 ## as you can see, dplyr has a pretty fluid api 
 
-### Stats ### <- 
+### Stats ###
 
 ### first, lets add another column.. lets make a "distance" column.
 bike_data$distance <- runif(length(bike_data$ID), 0, 25)
-### now, standardize
+### now, standardize 
+### use scale!
 bike_data$distance <- scale(bike_data$distance) 
 
 mean(bike_data$distance) # 0
@@ -182,7 +184,8 @@ c <- as.data.frame(cor(mtcars))
     select(mpg, cyl, hp) %>%
     summarize(r = cor(mpg, cyl))
 
-### remove data that is too highly correlated.
+### inspect data that is too highly correlated.
+### youd typically do this with a much higher threshold.
 for (i in 1:nrow(c)) {
   for (j in 1:ncol(c)) {
     if (upper.tri(c)[i,j] & abs(c[i, j]) > .80) {
@@ -190,6 +193,78 @@ for (i in 1:nrow(c)) {
     }
   }
 }
+  
+### 5 number summary, function call
+fivenum(mtcars$mpg)
+
+### distance is being weird... gonna drop it
+bike_data <- bike_data[, -12]
+
+### use dplyr, count rides for each day in the bike set...
+bike_data %>%
+  group_by(as.Date(start_date)) %>%
+  summarize(
+    n = n()
+  )
+
+### what is the 5 number summary?
+bike_data %>% 
+  group_by(as.Date(start_date)) %>%
+  summarize(
+    n = n(),
+    min = fivenum(ride_cost)[1],
+    Q1 = fivenum(ride_cost)[2],
+    med = median(ride_cost),
+    Q3 = fivenum(ride_cost)[4],
+    max = fivenum(ride_cost)[5]
+  )
+
+### note how you can essentially load up the summarize call with all the things you need
+### it's kind of the opposite of sql. it's not going to get mad at you after you do group by
+### like i don't have to also group by the ride_cost here (that would make the set bigger in fact)
+
+### what are the top 5 destinations per day?
+t <- bike_data %>%
+  group_by(as.Date(start_date), End.station) %>%
+  summarize(
+    n = n()
+  ) %>%
+  filter(row_number() <= 5) %>%
+  arrange(`as.Date(start_date)`, desc(n))
+
+### pretty cool, here, you can directly filter off of row number w/o actually
+### attaching it as a column
+
+### make a scatter plot with mtcars.
+plot(mtcars$wt, mtcars$mpg)
+### prediction
+### first, double check weight and mpg are correlated
+cor(mtcars$wt, mtcars$mpg)
+### now, make a linear regression against these variables
+### to start, split training and testing data
+# Now Selecting 80% of data as sample from total 'n' rows of the data  
+sample <- sample.int(n = nrow(mtcars), size = floor(.80*nrow(mtcars)), replace = F)
+train <- mtcars[sample, ]
+test  <- mtcars[-sample, ]
+
+### "mpg [IS EXPLAINED BY] weight"
+### weight is the predictor.
+mpg_reg <- lm(mpg ~ wt, data = train)
+
+### let's explore the model.
+summary(mpg_reg)
+
+# anova(mpg_reg)
+
+### make a prediction
+predict(mpg_reg, test)
+
+### now let's check for "multi colinearity"
+library(car)
+
+#add diagonal line for estimated regression line
+abline(a=0, b=1)
+
 
 
       
