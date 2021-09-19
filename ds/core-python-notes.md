@@ -1,8 +1,5 @@
 # Python
 
-* Python is the main language used to solve coding problems during interviews. 
-* Growing comfortable with its data structures and flows is essential to finding optimal solutions to algorithm problems.
-
 ## Sequences: List, Tuple, Range
 
 * Essentially, everything that the immutable types can do mutable types can do as well
