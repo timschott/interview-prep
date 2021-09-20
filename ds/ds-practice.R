@@ -232,8 +232,17 @@ t <- bike_data %>%
   filter(row_number() <= 5) %>%
   arrange(`as.Date(start_date)`, desc(n))
 
+
 ### pretty cool, here, you can directly filter off of row number w/o actually
 ### attaching it as a column
+### so: 
+
+# df %>%
+#   group_by(id) %>%
+# arrange(stopSequence) %>%
+# filter(row_number()==1 | row_number()==n()) 
+### this is how you would do a "LIMIT" type thing with dplyr
+### you could imagine doing row_number <= 5 for top 5 of something. 
 
 ### make a scatter plot with mtcars.
 plot(mtcars$wt, mtcars$mpg)
@@ -265,6 +274,73 @@ library(car)
 #add diagonal line for estimated regression line
 abline(a=0, b=1)
 
+### review / practice set knowledge
+
+### you can sort a data frame descending by using a minus notation inside order
+head(bike_data[order(-bike_data$ride_cost), ])
+
+### the practice software lets you use dplyr!
+
+### how many levels would comprise a given column if i made it a factor
+t <- as.factor(airquality$Temp)
+levels(t)
+length(levels(t))
+
+### how to run a decision tree? w/ rpart
+### fit <- rpart(columnA ~ columnB, data = df)
+
+### how run a log regression? w/ glm
+### fit <- glm(columnA ~ columnB, family = binomial)
+
+### when you are calculating correlation, NA's are going to be annoying.
+### use remove="complete"
+### val <- abs(cor(df[, i], df[, column_index], use = "complete"))
+
+find_highest_correlated = function(df, column) {
+  column_index <- which(colnames(df) == column)
+  highest <- 0
+  for (i in 1:ncol(df)) {
+    val <- abs(cor(df[, i], df[, column_index], use = "complete"))
+    if (val > highest & i!= column_index) {
+      highest <- val
+    }
+  }
+  return(highest)
+}
+
+### attach the number of [seconds] bt start_date and end_date
+t1 <- as.POSIXct(bike_data$start_date[1])
+t2 <- as.POSIXct(bike_data$end_date[1])
+
+bike_data <- bike_data %>%
+  mutate(sec_dif = abs(difftime(as.POSIXct(start_date), as.POSIXct(end_date), units = "secs")))
+
+### perform the "extract factors" func, semi-eleganty.
+extract_factors = function(df, n_levels, target) {
+  # ignore target.
+  # so get its index
+  ignore <- which(colnames(df) == target)
+  
+  # container 
+  met <- c()
+  for (i in 1:ncol(df)) {
+    # ignore at target
+    if (i != ignore) {
+      # convert to factor vec
+      fact_vec <- as.factor(df[, i])
+      # get level count
+      amt <- length(levels(fact_vec))
+      # check for match 
+      if (amt == n_levels) {
+        met[i] <- colnames(df)[i]
+      }
+    }
+  }
+  
+  return(sort(met))
+}
+
+extract_factors(bike_data, 2, 'sec_dif')
 
 
       
