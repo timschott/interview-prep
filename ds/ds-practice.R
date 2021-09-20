@@ -262,8 +262,7 @@ mpg_reg <- lm(mpg ~ wt, data = train)
 
 ### let's explore the model.
 summary(mpg_reg)
-
-# anova(mpg_reg)
+### anova(mpg_reg) # anova not relevant in this case
 
 ### make a prediction
 predict(mpg_reg, test)
@@ -287,14 +286,28 @@ levels(t)
 length(levels(t))
 
 ### how to run a decision tree? w/ rpart
-### fit <- rpart(columnA ~ columnB, data = df)
+library(rpart)
+fit <- rpart(columnA ~ columnB, data = df)
+predictions <- predict(fit, iris[,1:4])
 
-### how run a log regression? w/ glm
-### fit <- glm(columnA ~ columnB, family = binomial)
+### how run a log regression?
+### https://www.statmethods.net/advstats/glm.html
+fit <- glm(columnA ~ columnB, family = binomial)
+
+### how to run a random forest?
+library(randomForest)
+m <- randomForest(credit_train[,-17], credit_train$default, 
+                  sampsize = round(0.6*(length(credit_train$default))),ntree = 500, 
+                  mtry = sqrt(16), importance = TRUE)
+
+### write out knn
+library (caret)
+knnModel <- knn(train=training_set[,-1], test=test_set[,-1], cl=training_set$diagnosis, k=5)
+### where cl = factor of true classifications of training set
 
 ### when you are calculating correlation, NA's are going to be annoying.
 ### use remove="complete"
-### val <- abs(cor(df[, i], df[, column_index], use = "complete"))
+val <- abs(cor(df[, i], df[, column_index], use = "complete"))
 
 find_highest_correlated = function(df, column) {
   column_index <- which(colnames(df) == column)
@@ -341,6 +354,24 @@ extract_factors = function(df, n_levels, target) {
 }
 
 extract_factors(bike_data, 2, 'sec_dif')
+
+### add a new column, transformed from another
+### you can directly use dplyr to do this w/o needing a loop
+test <- airquality %>%
+  mutate(new = Temp * 2)
+
+### toy example, create a column that replaces NA ozone values w/ the class mean
+airquality2 <- airquality %>% 
+  mutate(Ozone, ifelse(is.na(Ozone),mean(Ozone,na.rm = TRUE),Ozone))
+
+### simple graph
+ggplot(data = airquality, aes(x=Temp, y=Ozone)) +
+  geom_point( color = "steelblue", size = 3, alpha = 0.5)
+
+### simple string / regex replace example
+### use gsub
+test <- "123456tim"
+test<-gsub("[0-9]", "", test) #test is now just "tim"
 
 
       
