@@ -159,7 +159,7 @@ IBM
 
 #### Dataframe
 
-* for 2d arrayys
+* for 2d arrays
   * column-index and row-index
 * simplest way to do this is provide a *dictionary* of *equal-length lists*
 
@@ -177,18 +177,17 @@ data = { 'name' : ['AA', 'IBM', 'GOOG'],
 * you can change the **row** index with `index` attr
   * `df.index = ['one', 'two', 'three']`
 
-
 * automatically, your df is going to get read in with column indices because of how the dictionary is set up
   * so for instance if you want to access the company names you can invoke `df['name']`
 
-
 * to rename a column, use `df.rename` and supply a mapping of old to new names:
   * `df.rename(columns={'oldName1': 'newName1', 'oldName2': 'newName2'}, inplace=True)`
-
+  * `inplace=True` is important, don't forget
 
 * accessing data
   * use column index
     * `df['name']`
+    * `df.loc[:,'name']`
   * use row level index
     * `df.loc[0]`
     * entire first row.
@@ -201,4 +200,49 @@ data = { 'name' : ['AA', 'IBM', 'GOOG'],
 * use `read_csv('filename, 'index_col = None)`
   * `index_col` should be set to true if there is no dummy data in the very first column.
   * `casts = pd.read_csv('cast.csv', index_col = None)`
+  * if you really don't want the arbitrary leading index, you can do `index_col=False` otherwise they're going to automatically make one for you.
+* inspect first 3 rows
+  * `df.head(3)`
+* total number of rows:
+  * `len(df)`
+
+#### Data Access
+
+* when you pull a row or column from a DF it is a 1d `series`
+* i think the big point of contrast with an R data frame is its less about accessing data through a numeric index (its loc in the matrix) and is instead heavily tied to the actual column / row names ('index') of the data
+  
+#### Filtering
+
+* like R, you can filter by injecting a boolean expression to the dataframe
+* `after85 = titles[titles['year'] > 1985]`
+* # select row w/ mpg < 20 and hp > 200
+* `mtcars[(mtcars['mpg'] < 20) & (mtcars['hp'] > 200)]`
+  * note how you have to encapsulate the conditions inside their own parens
+  * also note how its a single `&` rather than the pythonic `and`
+  
+#### Sorting
+
+* by default, the cars will sort by the index.
+* you can change this w/ `sort_values('col')`
+  * `ascending = False` for z-a
+
+#### Null Values
+
+* you can use `pd.isnull()` and `pd.notnull()`
+* ex
+  * `ozone_good = [v for v in airquality['Ozone'] if pd.notnull(v)]`
+* to quickly reconcile these issues, you can go use `.fillna('new val')`
+
+#### String Operations
+
+* they afford a special call to search series based on string pattern
+* like sql `like`
+* `t[t['title'].str.startswith("Maa ")].head(3)`
+* however - in order to work with its particular api, you have to keep casting back the value at hand to `.str` the pandas string type
+* `mtcars[mtcars['mnm'].str.lower().str.contains("p")]`
+* for instance here, i lowercase the string, and then i also have to do a `.str` before i check for the contains.
+* work in a regex...
+* `mtcars[mtcars['mnm'].str.lower().str.match('[a-z]+\s[a-z]+\s[a-z]+')]`
+  * woof lol
+  * hit the lower, and then check the match.
 * 
