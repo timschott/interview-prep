@@ -1786,4 +1786,18 @@ group by f1.post_date
 
 * indexes are used to efficiently retrieve data from the table
 * they speed up retrieval and queries
-* 
+
+### Join a table to itself, keeping everything
+
+```
+SELECT A.ID as AID, B.ID as BID, ... FROM 
+Customers A
+join 
+Customers B
+where
+A.CustomerName = B.CustomerName
+```
+
+* if you really want to keep all the duplicate data (like literally stacking itself)...
+* you *can* but you have to alias everything because sql can't display identically named columns.
+  * because of the UNIQUE constraint on column names
