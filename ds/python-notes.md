@@ -263,9 +263,38 @@ plt.show()
 ### Aggregation / Group by.
 
 * you can group by column-headers
-* `c.groupby(['year']).size()`
-* `bike_data.groupby(['Member type']).size()`
-  * `groupby()` is *itself* a function so you need to wrap it in parens, and then you are able to access the outputs
+* as a rule ... this can be pretty slow if you try and do it on more than 1 col
+  * `c.groupby(['year']).size()`
+  * `bike_data.groupby(['Member type']).size()`
+* `groupby()` is *itself* a function so you need to wrap it in parens, and then you are able to access the outputs
 * something to note is that with this group by call, its just like in dplyr where effectively the output is a select * from that aggregated pool
   * different from sql where if you don't explicitly say what you want, you get an error
+
+* w/ two columns:
+  * `b_agg = pd.DataFrame(bike_data.groupby(['Start date', 'Start station']))`
+
+* we have access to some standard functions like
+  * `count`
+  * `sum`
+  * `mean`
+  * `mad` (mean absolute deviation)
+  * `min`
+  * `max`
+  * `abs`
+
+* another, generally, helpful tool:
+* `describe()` which takes a series and outputs 5 number summary as well as mean, stddev, count and max.
+* `df['column'].describe()['std']` -> standard deviation for the col
+
+* another handy call
+* `data.groupby(['column']).groups.keys()`
+  * gets you the (unique) group keys its using
+
+* pipeline time...
+* how to apply transformations and other functions to aggregated data
+* ie dplyr / sql like group by "pipeline"
+* https://www.shanelynn.ie/summarising-aggregation-and-grouping-data-in-python-pandas/
+
+* example, sum durations per start station
+* `bike_data.groupby(['Start station']).sum()`
 * 
