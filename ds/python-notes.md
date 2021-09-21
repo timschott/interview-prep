@@ -157,6 +157,11 @@ print(ds[0]) # access the value at index 0
 IBM
 ```
 
+* make a list of random integers.
+* `randoms = np.random.randint(0, 10 ,size=(len(bike_data), 1))`
+* make a list of random decimals
+* `randoms = np.random.uniform(low=0.0, high=10.0, size=(len(bike_data,)))`
+
 #### Dataframe
 
 * for 2d arrays
@@ -296,5 +301,25 @@ plt.show()
 * https://www.shanelynn.ie/summarising-aggregation-and-grouping-data-in-python-pandas/
 
 * example, sum durations per start station
-* `bike_data.groupby(['Start station']).sum()`
-* 
+* `bike_data.groupby(['Start station'])['Duration'].sum()`
+
+* another thing to note is that you get a `DataFrameGroupBy` object
+  * w/ key and value
+  * it associates the grouping w/ the associated data for it
+* to access the mini grouping...
+* `df.groupby['city].get_group('mumbai')`
+
+* maximum duration per city
+* `bike_data.groupby(['Start station'])['Duration'].max().sort_values(ascending = False)`
+  * notice how you have to plug in the pieces you want from left to right
+  * first we group
+  * then i grab only the Duration column from the mini df
+    * which note will have an arbitrary listing of everything
+  * then i grab the max
+
+* one of the args you can pass to `groupby()` is `,dropna = True` to not consider na's
+  
+* note that after the aggregation, and you have 1 column, you have a `Series` which is that first pandas data structure. it has an index, still
+* to just get the values, hit it with a `.values` at the end, then you can work w/ it like any other array
+* `bike_data.groupby('End station')['ride_cost'].mean().sort_values(ascending = False).values[0:5]`
+
