@@ -210,12 +210,15 @@ data = { 'name' : ['AA', 'IBM', 'GOOG'],
 
 * when you pull a row or column from a DF it is a 1d `series`
 * i think the big point of contrast with an R data frame is its less about accessing data through a numeric index (its loc in the matrix) and is instead heavily tied to the actual column / row names ('index') of the data
+* you can automatically pull a column out just by invoking its name
+* like a java getter
+* `mtcars.mpg` -> series.
   
 #### Filtering
 
 * like R, you can filter by injecting a boolean expression to the dataframe
 * `after85 = titles[titles['year'] > 1985]`
-* # select row w/ mpg < 20 and hp > 200
+* select row w/ mpg < 20 and hp > 200
 * `mtcars[(mtcars['mpg'] < 20) & (mtcars['hp'] > 200)]`
   * note how you have to encapsulate the conditions inside their own parens
   * also note how its a single `&` rather than the pythonic `and`
@@ -245,4 +248,24 @@ data = { 'name' : ['AA', 'IBM', 'GOOG'],
 * `mtcars[mtcars['mnm'].str.lower().str.match('[a-z]+\s[a-z]+\s[a-z]+')]`
   * woof lol
   * hit the lower, and then check the match.
+
+#### Basic Plot
+
+* https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
+
+```
+plt.scatter(mtcars.mpg, mtcars.wt, c="g")
+plt.xlabel("mpg")
+plt.ylabel("wt")
+plt.show()
+```
+
+### Aggregation / Group by.
+
+* you can group by column-headers
+* `c.groupby(['year']).size()`
+* `bike_data.groupby(['Member type']).size()`
+  * `groupby()` is *itself* a function so you need to wrap it in parens, and then you are able to access the outputs
+* something to note is that with this group by call, its just like in dplyr where effectively the output is a select * from that aggregated pool
+  * different from sql where if you don't explicitly say what you want, you get an error
 * 
