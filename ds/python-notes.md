@@ -1,4 +1,4 @@
-# Python
+## Core
 
 ## Sequences: List, Tuple, Range
 
@@ -132,4 +132,73 @@ odds = [1, 3, 5, 7, 9]
 [1, 5]
 ```
 
-### Slicing
+## Pandas
+
+### Overview
+
+#### Series
+
+* 1-d array that can store a mixture of data types
+* `pd.Series({list, tuple or dictionary})`
+
+```
+d = {'name' : 'IBM', 'date' : '2010-09-08', 'shares' : 100, 'price' : 10.2}
+ds = pd.Series(d)
+
+print(ds) # print the whole thing
+
+name IBM
+date 2010-09-08
+price 10.2
+shares 100
+
+print(ds[0]) # access the value at index 0
+
+IBM
+```
+
+#### Dataframe
+
+* for 2d arrayys
+  * column-index and row-index
+* simplest way to do this is provide a *dictionary* of *equal-length lists*
+
+```
+data = { 'name' : ['AA', 'IBM', 'GOOG'],
+  'date' : ['2001-12-01', '2012-02-10', '2010-04-09'],
+  'shares' : [100, 30, 90],
+  'price' : [12.3, 10.3, 32.2]
+```
+
+* add a column to a dataframe like:
+  * `df['newColumn'] = 'Unknown'`
+
+* the row index has a default value of 0, 1, ... number of rows
+* you can change the **row** index with `index` attr
+  * `df.index = ['one', 'two', 'three']`
+
+
+* automatically, your df is going to get read in with column indices because of how the dictionary is set up
+  * so for instance if you want to access the company names you can invoke `df['name']`
+
+
+* to rename a column, use `df.rename` and supply a mapping of old to new names:
+  * `df.rename(columns={'oldName1': 'newName1', 'oldName2': 'newName2'}, inplace=True)`
+
+
+* accessing data
+  * use column index
+    * `df['name']`
+  * use row level index
+    * `df.loc[0]`
+    * entire first row.
+
+* deleting data:
+  * `df.drop('col_name', axis = 1)`
+
+#### Reading files
+
+* use `read_csv('filename, 'index_col = None)`
+  * `index_col` should be set to true if there is no dummy data in the very first column.
+  * `casts = pd.read_csv('cast.csv', index_col = None)`
+* 
