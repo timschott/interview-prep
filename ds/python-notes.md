@@ -160,7 +160,7 @@ IBM
 * make a list of random integers.
 * `randoms = np.random.randint(0, 10 ,size=(len(bike_data), 1))`
 * make a list of random decimals
-* `randoms = np.random.uniform(low=0.0, high=10.0, size=(len(bike_data,)))`
+* `randoms = np.random.uniform(low=0.0, high=10.0, size=(len(bike_data), 1))`
 
 #### Dataframe
 
@@ -188,6 +188,19 @@ data = { 'name' : ['AA', 'IBM', 'GOOG'],
 * to rename a column, use `df.rename` and supply a mapping of old to new names:
   * `df.rename(columns={'oldName1': 'newName1', 'oldName2': 'newName2'}, inplace=True)`
   * `inplace=True` is important, don't forget
+
+* swap position of two columns
+
+```
+# this gets you every column name
+col_list = list(bike_data)
+
+# now you can move around your columns of interest
+col_list[7], col_list[8] = col_list[8], col_list[7]
+
+# and reassign to the df
+bike_data.columns = col_list
+```
 
 * accessing data
   * use column index
@@ -323,3 +336,34 @@ plt.show()
 * to just get the values, hit it with a `.values` at the end, then you can work w/ it like any other array
 * `bike_data.groupby('End station')['ride_cost'].mean().sort_values(ascending = False).values[0:5]`
 
+### Various
+
+* normalize the entire dataframe
+* `normalized_df=(df-df.mean())/df.std()`
+
+* split data (row wise)
+
+```
+airquality1 = airquality.loc[:math.ceil(len(airquality)/2), :]
+airquality2 = airquality.loc[math.ceil(len(airquality)/2):, :]
+```
+
+* ceiling function in python is `ceil()`
+* You can accomplish a `UNION ALL` like operation w/
+  * `pd.concat([df1, df2...])`
+
+* clean up a column
+
+```
+def clean_price_column(df, column):
+	
+	price_good = [p if pd.notnull(p) else 0 for p in df['price']]
+	
+	price_good = [float(re.sub('[\$,\s]','', p)) for p in price_good]
+
+```
+
+* after you subtract two dates, get the value with
+* https://stackoverflow.com/questions/25646200/python-convert-timedelta-to-int-in-a-dataframe
+* and to make it a float, 
+* `pd.to_numeric(df['tdColumn'].dt.days, downcast='float')`
