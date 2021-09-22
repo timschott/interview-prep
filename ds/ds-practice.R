@@ -313,13 +313,17 @@ find_highest_correlated = function(df, column) {
   column_index <- which(colnames(df) == column)
   highest <- 0
   for (i in 1:ncol(df)) {
-    val <- abs(cor(df[, i], df[, column_index], use = "complete"))
-    if (val > highest & i!= column_index) {
-      highest <- val
+    if (is.numeric(df[, column_index])) {
+      val <- abs(cor(df[, i], df[, column_index], use = "complete"))
+      if (val > highest & i!= column_index) {
+        highest <- val
+      }
     }
   }
   return(highest)
 }
+
+find_highest_correlated(airquality, 'Ozone')
 
 ### attach the number of [seconds] bt start_date and end_date
 t1 <- as.POSIXct(bike_data$start_date[1])
