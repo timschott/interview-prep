@@ -290,6 +290,7 @@ library(rpart)
 fit <- rpart(columnA ~ columnB, data = df)
 predictions <- predict(fit, iris[,1:4])
 
+rpart(wt ~ mpg, data=mtcars)
 ### how run a log regression?
 ### https://www.statmethods.net/advstats/glm.html
 fit <- glm(columnA ~ columnB, family = binomial)
