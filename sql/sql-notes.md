@@ -1790,14 +1790,14 @@ group by f1.post_date
 ### Join a table to itself, keeping everything
 
 ```
-SELECT A.ID as AID, B.ID as BID, ... FROM 
+SELECT * FROM 
 Customers A
 join 
 Customers B
 where
-A.CustomerName = B.CustomerName
+1 = 1`
 ```
 
 * if you really want to keep all the duplicate data (like literally stacking itself)...
-* you *can* but you have to alias everything because sql can't display identically named columns.
-  * because of the UNIQUE constraint on column names
+* 1 = 1 always executes to true, so this will effectively place all rows besides one another
+* tantamount to `cbind()` in R.
