@@ -1825,3 +1825,18 @@ group by title, p.budget
 * but there is only 1 budget per 1 project, so it doesn't make sense to do something like `avg(budget)`
 * I guess this is just something to point out - you can have a column in a group by that's not directly returned in the select
 * tl;dr if you are getting errors, always try grouping by stuff in the select clause.
+
+### Distinct and Deduping
+
+* if you have a column where you have id's and the left, and values on the right, and you need to dedupe...
+* like if you had (1, aus), (1, usa), (1, aus) and you wanted just (1, aus) and (1, usa) back....
+* remember that `DISTINCT` gets applied across the entire from statement.
+
+```sql
+select distinct a.from_user, a.nationality from sub s
+join
+agg a
+on s.from_user = a.from_user
+and
+s.rs = a.review_score
+```
