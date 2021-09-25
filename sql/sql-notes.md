@@ -12,8 +12,8 @@ Two most basic SQL ingredients.
 
 `FROM` identifies the `table` they live in.
 
-```
-SELECT year, artist, album FROM spotify.playlist
+```sql
+(0)ELECT year, artist, album FROM spotify.playlist
 ```
 
 You'll need to prefix the database name at the end 
@@ -52,7 +52,7 @@ Sometimes you're going to have to have an alias because 2 tables could have the 
 
 i.e. 
 
-```
+```sql
 SELECT
 	customerName,
 	COUNT(o.orderNumber) total
@@ -98,7 +98,7 @@ SELECT *
 
 For comparisons on nun-numerical data, you can use single quotes.
 
-```
+```sql
 SELECT * from tutorial.us_housing_units
 WHERE month != 'January'
 ```
@@ -155,7 +155,7 @@ SELECT * FROM tutorial.billboard_top_100_year_end WHERE "group" like 'DJ_%'
 Select all records where the second letter of the City is an "a".
 
 
-```
+```sql
 SELECT * FROM Customers
 WHERE City LIKE '_a%'
 ```
@@ -1718,7 +1718,7 @@ where cool = (select max(cool) from yelp_reviews);
 
 * `create table [table name]` ...
 
-```
+```sql
 CREATE TABLE Persons (
     PersonId int NOT NULL,
     LastName varchar(255),
@@ -1736,7 +1736,7 @@ CREATE TABLE Persons (
 
 * `insert into [table name] [columns] values` ...
 
-```
+```sql
 INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
 VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
 ```
@@ -1789,7 +1789,7 @@ group by f1.post_date
 
 ### Join a table to itself, keeping everything
 
-```
+```sql
 SELECT * FROM 
 Customers A
 join 
@@ -1801,3 +1801,27 @@ where
 * if you really want to keep all the duplicate data (like literally stacking itself)...
 * 1 = 1 always executes to true, so this will effectively place all rows besides one another
 * tantamount to `cbind()` in R.
+
+### A Little Group By Fun...
+
+```sql
+select title, FLOOR((p.budget) / count(emp_id)) as budget_emp_ratio from ms_projects p
+join
+ms_emp_projects e
+on p.id = e.project_id
+group by title, p.budget
+```
+
+* Here, we needed to the "price per employee" for every project.
+* You take a project's budget, and then divide it by the number of employees assigned
+* Obviously, because we're on a per - project level, we want to group by the title
+* From there, though, this query is interesting.
+* We don't have to worry about grouping by emp_id because `count(emp_id)` already implicitly aggregates that column
+* But the budget figure is interesting
+* Even though it's not directly returned in the select, we still have to group by it 
+* In order to satisfy the aggregation rules 
+* since we aren't applying an aggregate function to it - we're just selecting it directly
+* as an alternative, you *could* apply an aggregation function to it
+* but there is only 1 budget per 1 project, so it doesn't make sense to do something like `avg(budget)`
+* I guess this is just something to point out - you can have a column in a group by that's not directly returned in the select
+* tl;dr if you are getting errors, always try grouping by stuff in the select clause.
