@@ -41,6 +41,11 @@
 * How to use a list as a queue?
   * in general, its inefficient to use lists as a queue because the appends and pops from the end of the list cause every element in the list to have to shift by one
     * think about, for instance, if you have 10 people lined up, and the second person gets out of line. everyone after them has to shift up a spot 
+* what item is at spot 8?
+  * `nums.index(8)`
+* does my list contain the number 12?
+  * `12 in nums`
+* 
 
 ### Tuples
 
