@@ -76,7 +76,7 @@ for _ in range(3):
 
 * `while` loop:
 
-```
+```python
 >>> def count(s, value):
         """Count the number of occurrences of value in sequence s."""
         total, index = 0, 0
@@ -89,9 +89,12 @@ for _ in range(3):
 2
 ```
 
+* you can use this to iterate through a list until its empty:
+* `while l1:`
+
 * traditional `for` loop:
 
-```
+```python
 >>> def count(s, value):
         """Count the number of occurrences of value in sequence s."""
         total = 0
@@ -104,7 +107,7 @@ for _ in range(3):
 
 * iterating through a list while looking at its pairs
 
-```
+```python
 >>> pairs = [[1, 2], [2, 2], [2, 3], [4, 4]]
 
 >>> for x, y in pairs:
