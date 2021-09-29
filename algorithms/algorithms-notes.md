@@ -120,15 +120,108 @@ print(reversedString)
 
 ```python
 def fizzbuzzish():
-    ans = []
-    for i in range(1, 101):
-        
-        if (i % 6 == 0):
-            print(str(i) + " ab")
-        elif (i % 2 == 0):
-            print(str(i) + " a")
-        elif (i % 3 == 0):
-            print(str(i) + " b")
-        else:
-            print(i)
+  ans = []
+  for i in range(1, 101):
+      
+      if (i % 6 == 0):
+          print(str(i) + " ab")
+      elif (i % 2 == 0):
+          print(str(i) + " a")
+      elif (i % 3 == 0):
+          print(str(i) + " b")
+      else:
+          print(i)
 ```
+
+* insight here is to try and catch the most specific condition at the top.
+* they give it to you in that order because they want you to check for 2 then 3 then 6.. which isn't the correct ordering.
+* also insight here is, if a number is divisible by a and b it's divisible by a * b (essentially the definition of factoring)
+
+### First Unique Character in a String
+
+* my first naive solution, use a list to keep track of what you have seen. 
+* if you've run into it before, delete all instances.
+
+```python
+    seen = []
+
+    for char in string:
+        if (char not in seen):
+            seen.append(char)
+        else:
+            string = string.replace(char, "")
+
+    if string != "":
+        return string[0]
+    else:
+        return "all chars unique"
+```
+
+* you could also do a dictionary w/ freq counts per character, but then you have to loop through the dictionary after you loop through the target string
+* i guess if they say, no other methods
+
+### loop through dict
+
+`for key, val in dict.items(): print(key, val)`
+
+### double loop list comprehension
+
+`[x + y for x,y in zip(l1, l2)]`
+
+### merge sorted lists
+
+* off the dome:
+
+```python
+i = 0
+j = 0
+
+sorted_merge = []
+while i < len(l1) and j < len(l2):
+    l1_temp = l1[i]
+    l2_temp = l2[j]
+
+    if (l1_temp <= l2_temp):
+        sorted_merge.append(l1_temp)
+        i += 1
+    elif (l1_temp >= l2_temp):
+        sorted_merge.append(l2_temp)
+        j += 1
+
+if (i < len(l1)):
+    print('hi')
+    sorted_merge.extend(l1[i:])
+
+if (j < len(l2)):
+    print('low')
+    sorted_merge.extend(l2[j:])
+
+return sorted_merge
+```
+
+* it works
+* if you were just using methods you could obviously just do
+* `l1.extend(l2)` and then hit that with a `sorted()`
+* a useful way to improve my solution is pop.
+  * `pop(n)` returns the element at n and then removes it
+  * so you could do what i did but pop
+  * and that way you don't even need an index, you just do the first
+  * because they are already sorted
+
+```python
+while (l1 and l2):
+    if (l1[0] <= l2[0]): # Compare both heads
+        item = l1.pop(0) # Pop from the head
+        sorted_list.append(item)
+    else:
+        item = l2.pop(0)
+        sorted_list.append(item)
+
+# Add the remaining of the lists
+sorted_list.extend(l1 if l1 else l2)
+```
+
+### Set intersect
+
+* easy list comprehension
+* `return [x for x in l1 if x in l2]`
