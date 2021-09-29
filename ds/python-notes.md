@@ -375,28 +375,3 @@ def clean_price_column(df, column):
 * https://stackoverflow.com/questions/25646200/python-convert-timedelta-to-int-in-a-dataframe
 * and to make it a float, 
 * `pd.to_numeric(df['tdColumn'].dt.days, downcast='float')`
-
-### Practice Problems - explanations
-
-### Two Sum
-
-* essentially, two sum hands you two linked lists in reverse order and you need to return the sum of its values and place that in a linked list....
-  * input: l1 = [2,4,3] l2 = [5,6,4]
-  * output: [7,0,8]
-* strategy:
-  * it's not efficient just to literally REVERSE what is inside.
-  * take advantage of the properties of math!
-
-```
-
-243
-564
-[ what im writing]
-  7, carry the 1
-  0, carry the 1
-  8, carry the 1
-]
-```
-
-* so, if you think about how you add numbers, we actually add them from right to left
-* so it's helpful that our linked list is backwards. 
