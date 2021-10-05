@@ -1,18 +1,8 @@
 
 # class Solution:
 
-def fizzbuzzish():
-    ans = []
-    for i in range(1, 101):
-        
-        if (i % 6 == 0):
-            print(str(i) + " ab")
-        elif (i % 2 == 0):
-            print(str(i) + " a")
-        elif (i % 3 == 0):
-            print(str(i) + " b")
-        else:
-            print(i)
+def intersect(l1, l2):
 
+    return [x for x in l1 if x in l2]
 if __name__ == "__main__":
-    fizzbuzzish()
+    print(intersect([1,4,100], [4,5,6,7,8,9]))
