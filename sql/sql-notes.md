@@ -1420,7 +1420,7 @@ Fairly straightforward. Note that the biggest numbers will be in the 100th perce
   * `LEAD` pulls from following rows
 * You can customize the offset to change what other row it compares to the current row
 * Syntax: `LAG(column_name, offset)`
-```
+```sql
     LAG(order_value, 1) OVER (
         PARTITION BY productLine
         ORDER BY order_year
@@ -1428,7 +1428,7 @@ Fairly straightforward. Note that the biggest numbers will be in the 100th perce
 ```
 * Useful for doing something like calculating a running-difference
 
-```
+```sql
 SELECT start_terminal,
        duration_seconds,
        duration_seconds - LAG(duration_seconds, 1) OVER
@@ -1443,7 +1443,7 @@ SELECT start_terminal,
 
 * You can reuse a window with an alias
 
-```
+```sql
 SELECT start_terminal,
        duration_seconds,
        NTILE(4) OVER ntile_window AS quartile,
@@ -1471,14 +1471,14 @@ WINDOW ntile_window AS
   * . so, could be used to inc. perf of a large subquery-reliant operation
   * can also be self-referencing (recursive ...)
 * Syntax:
-```
+```sql
 WITH cte_name () AS (
     query
 ) 
 SELECT * FROM cte_name;
 ```
 * Example:
-```
+```sql
 WITH customers_in_usa AS (
     SELECT 
         customerName, state
@@ -1504,7 +1504,7 @@ WITH customers_in_usa AS (
 * remember the CTE syntax
 * only need one with!!
 
-```
+```sql
 with [cte_1_name] as (
   blah blah
 ),
@@ -1570,7 +1570,7 @@ from employee
 * Recall `Having`...
   * to be used when we want to filter out something that is grouped
 
-```
+```sql
 select neighbourhood, avg(beds) as avg_beds
 from airbnb_search_details
 group by neighbourhood
@@ -1579,6 +1579,21 @@ order by avg_beds desc
 ```
 
 * Note that here, I can't use a where clause because I want to filter out results after they have been aggregated.
+* Another illustration:
+* I wanted to compare a category average to a global average
+* just trying to do this with where statement will not work because:
+  * to get the category average, you have to aggregate and bucket into each category
+  * this means you need a group by
+  * after that, however, you can't use a normal where
+  * because you can't take that avg value and stick it in a where clause
+  * that's why we need having. to do a *post-aggregation* filtering
+
+```sql
+select city
+from zillow_transactions
+group by city
+having avg(mkt_price) > (select avg(mkt_price) from zillow_transactions)
+```
 
 #### hit division with a `.0`
 
@@ -1589,7 +1604,7 @@ order by avg_beds desc
 
 * In cases where you want to have a maximum within a group, it can make sense to use `RANK`.
 
-```
+```sql
 WITH sub as (select * from fb_eu_energy
 UNION
 select * from fb_asia_energy
@@ -1666,7 +1681,7 @@ where s2.r = 1
   * now you want to smush it all....
   * just join on the equal ids 
 
-```
+```sql
 select *
 from linkedin_projects p
 JOIN linkedin_emp_projects emp_proj ON  p.id=emp_proj.project_id 
@@ -1705,7 +1720,7 @@ order by userid
 #### Subquery in a Where Clause
 * remember that you can directly run a subquery in a where clause
 
-```
+```sql
 select business_name, review_text from yelp_reviews
 where cool = (select max(cool) from yelp_reviews);
 ```
@@ -1753,7 +1768,7 @@ VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway
 
 ### Elegant Ratio
 
-```
+```sql
 select f1.post_date, count(case when f1.post_keywords like '%spam%' then 1 else null end) * 1.0
 / count(f2.post_id) as spam_share
 from facebook_posts f1
