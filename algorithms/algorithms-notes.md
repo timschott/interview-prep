@@ -160,14 +160,6 @@ def fizzbuzzish():
 * you could also do a dictionary w/ freq counts per character, but then you have to loop through the dictionary after you loop through the target string
 * i guess if they say, no other methods
 
-### loop through dict
-
-`for key, val in dict.items(): print(key, val)`
-
-### double loop list comprehension
-
-`[x + y for x,y in zip(l1, l2)]`
-
 ### merge sorted lists
 
 * off the dome:
@@ -220,8 +212,3 @@ while (l1 and l2):
 # Add the remaining of the lists
 sorted_list.extend(l1 if l1 else l2)
 ```
-
-### Set intersect
-
-* easy list comprehension
-* `return [x for x in l1 if x in l2]`

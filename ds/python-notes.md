@@ -56,7 +56,8 @@
   * `nums.index(8)`
 * does my list contain the number 12?
   * `12 in nums`
-* 
+* list intersection (what in l1 is in l2)
+  * `return [x for x in l1 if x in l2]`
 
 ### Tuples
 
