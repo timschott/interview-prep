@@ -1,5 +1,19 @@
 ## Core
 
+## Strings
+
+* remove whitespace and newlines
+  * `.strip()`
+* string contains
+  * `x in y`
+* string equals
+  * `x == "dog"`
+* all strings are uniformly unicode, so no need to worry about char issues
+* merge characters with `.join`
+  * `-.join("elvis") -> e-l-v-i-s`
+  * `''.join(sorted(aaron)) -> aanor`
+* 
+
 ## Data Structures 
 
 ### Lists
@@ -160,6 +174,8 @@ for _ in range(3):
 * the default `sort()` method is guaranteed to be stable
 * A sort is stable if it guarantees not to change the relative order of elements with the same value
 * for dictionaries, use the `sorted()` method (need to import)
+  * `sorted_bigrams = sorted(bigrams.items(), key=operator.itemgetter(1), reverse = True)`
+  * another option would be using key = length to sort by the longest "items" val
 
 ### Comprehension 
 
@@ -420,6 +436,19 @@ plt.show()
 * `bike_data.groupby('End station')['ride_cost'].mean().sort_values(ascending = False).values[0:5]`
 
 ## Functions
+
+### Exception handling (try/except)
+
+```python
+
+def find_anagram(word):
+  sig = signature_dict(word)
+
+  try:
+    return anagrams_by_sig(sig)
+  except KeyError:
+    return set{}
+```
 
 ### Arguments
 

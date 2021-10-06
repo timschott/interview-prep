@@ -1,5 +1,9 @@
 ## ML Conceptual
 
+references:
+  * https://towardsdatascience.com/data-science-interview-guide-4ee9f5dc778
+  * 
+
 * explain the difference between supervised and unsupervised learning
 * what is bias?
 * what is variance?
@@ -25,6 +29,7 @@
   * hierarchical clustering
   * logistic
   * linear
+    * what assumptions do you make when using linear models?
   * knn
   * topic modeling
   * naive bayes
@@ -54,4 +59,7 @@
     * attention
 * how do you reduce dimensionality of textual data?
     * PCA
+      * explain PCA
     * LDA
+* how do you deal with an imbalanced data set, like credit card fraud detection?
+* what is homoskedasticity
