@@ -1,9 +1,6 @@
 ## Core
 
-## Sequences: List, Tuple, Range
-
-* Essentially, everything that the immutable types can do mutable types can do as well
-  * plus tons of other extra stuff
+## Data Structures 
 
 ### Lists
 
@@ -56,7 +53,48 @@
   * `(a,b,c)`
   * `tuple()`
 * the comma is what sets it apart as a tuple.
+* variant, `namedtuple` that can associate label with the fields
+* 
 
+
+
+
+### Dictionaries
+
+* associates keys with items
+  * `my_dict = {"tim": "schott"}`
+* values are access with bracket notation, inputting the key
+* check for existence w/ `in`
+  * `"Italy" in capitals`
+* merge w/ `update`
+  * in place
+  * `capitals.update(morecapitals)`
+* delete w/ `del`
+  * `del capitals['United Kingdom']`
+* declare empty with `{}`
+* get a tuple pair of its contents w/ `dict.items()`
+
+#### Looping over a dict
+
+* over the keys:
+  * `for key in dictionary:`
+* over the values:
+  * `for val in dictionary.values()`
+* over both:
+  * `for key, val in dictionary.items()`
+* when you call `.keys()` you are handed back an "iterator" object that you can then cast w/ list
+* `list(mydict.keys())`
+* order of insertion is maintained in python now.
+
+### Sets
+
+* bag of mixed type of items
+* no duplicates
+* write w/ braces and no colons
+  * `continents = {'tim', 'james', 'michael'}`
+* 
+
+## Looping and Manipulating Structures
 
 ### Ranges
 
@@ -121,9 +159,9 @@ for _ in range(3):
 
 * the default `sort()` method is guaranteed to be stable
 * A sort is stable if it guarantees not to change the relative order of elements with the same value
-  
+* for dictionaries, use the `sorted()` method (need to import)
 
-### List Comprehension 
+### Comprehension 
 
 * many times, you can handle iterations through a list in one compact line.
 
@@ -139,6 +177,43 @@ odds = [1, 3, 5, 7, 9]
 >>> [x for x in odds if 25 % x == 0]
 [1, 5]
 ```
+
+* loop through 2 lists at once
+  * `[x + y for x,y in zip(l1, l2)]`
+
+* for a dictionary:
+* you loop through key, column value pairs!
+
+```python
+countries_by_capital = {capital: country for country, capital in capitals_by_country.items()}
+```
+
+* apply a function to a comprehension
+* surround the inner body of a comprehension w/ the function call:
+  * `sum(num ** 2 for num in list)`
+
+* nested loop comprehension
+* let's transform a double loop into a single comprehension
+
+```python
+
+counting = []
+# change this into a comprehension
+for i in range(1, 11):
+    for j in range(1, i+1):
+        counting.append(j)
+
+# becomes...
+
+counting = [j for i in range(1, 11) for j in range(1, i+1)]
+```
+
+* if we're talking steps, literally collapse the loop and then add the additional `j` at the beginning.
+* inner var + for outer var in outer range + for inner var in inner range (that should reference outer var)
+
+* another use case - row wise loop across a numpy matrix
+* `[a[i,j] for i in range(a.shape[0]) for j in range(a.shape[1])]`
+
 
 ## Pandas
 
@@ -344,12 +419,111 @@ plt.show()
 * to just get the values, hit it with a `.values` at the end, then you can work w/ it like any other array
 * `bike_data.groupby('End station')['ride_cost'].mean().sort_values(ascending = False).values[0:5]`
 
-### Various
+## Functions
 
-* normalize the entire dataframe
+### Arguments
+
+* the two different types of arguments are **positional** and **keyword**
+* let's look at a function: `def save_ranking(first, second, third=None, fourth=None):`
+* this function features both kinds
+* `first` is a positional argument. 
+  * it cannot be omitted
+* `third` is a keyword argument
+  * you can use the function w/o supplying a value
+  * the corresponding default is used
+* positional arguments come first in function declarations.
+
+### Packing
+
+* in some cases, you don't know how many items you are going to hand off to a function
+* in this case, you want to use **packing**
+* with packing, a function accepts an arbitrary number of arguments
+* `*args` = accept arbitrary # of *positional* arguments
+* `*kwargs` = accept arbitrary # of *keyword* arguments
+* for example, you could write a function to square an arbitrary group of positional arguments
+
+```python
+def my_square(*args):
+  for arg in args:
+    print(arg ** 2)
+
+def my_sum(*args):
+  print(sum(args))
+```
+
+* if you want to receive a dictionary, use 2 stars
+
+```python
+def func_kwargs(**kwargs):
+  print('kwargs: kwargs)
+```
+
+```python
+dict = {'arg1': 'Schott', 'arg2': 'Smith', 'Test': 'Man'}
+
+def func_kwargs_positional(arg1, arg2, **kwargs):
+    print('d1: ', arg1)
+    print('d2: ', arg2)
+    print('kwargs: ', kwargs)
+
+func_kwargs_positional(**dict)
+
+d1:  Schott
+d2:  Smith
+kwargs:  {'Test': 'Man'}
+```
+
+* this is a great way to write functions that only care about certain inputs but can still do stuff w/ other values.
+
+### Unpacking
+
+* this is a convenient way to satisfy a function contract if you know it accepts a certain number of arguments and you don't want to write them out
+* if i have a constructor `person(first, last, dob)` and you have a tuple with those 3 items, i can just "unpack" them
+* `person(*tuple_list[0])`
+
+```python
+def func(arg1, arg2, arg3):
+    print('arg1 =', arg1)
+    print('arg2 =', arg2)
+    print('arg3 =', arg3)
+
+l = ['one', 'two', 'three']
+
+func(*l)
+# arg1 = one
+# arg2 = two
+# arg3 = three
+```
+
+* likewise, to pack a dict, use 2 stars.
+
+## Classes
+
+### Dataclass
+
+* a newer way to make an object in python
+* very similar looking to a POJO
+
+```python
+@dataclass
+class Robot:
+  ID: int
+  title: str = 'unknown'
+  ability: int = 0
+  weight: float = 0.0
+```
+
+* automatically lets you pull out fields (with dot notation)
+* once you make an object like
+* `terminator = Robot(2, 'Terminator', 7, 42.0)`
+* you can convert it to a dictionary w/ `asdict()`
+
+## Various
+
+#### normalize the entire dataframe
 * `normalized_df=(df-df.mean())/df.std()`
 
-* split data (row wise)
+#### split data (row wise)
 
 ```
 airquality1 = airquality.loc[:math.ceil(len(airquality)/2), :]
@@ -360,7 +534,7 @@ airquality2 = airquality.loc[math.ceil(len(airquality)/2):, :]
 * You can accomplish a `UNION ALL` like operation w/
   * `pd.concat([df1, df2...])`
 
-* clean up a column
+#### clean up a pandas column
 
 ```
 def clean_price_column(df, column):
@@ -371,14 +545,17 @@ def clean_price_column(df, column):
 
 ```
 
+#### data wrangling 
 * after you subtract two dates, get the value with
-* https://stackoverflow.com/questions/25646200/python-convert-timedelta-to-int-in-a-dataframe
+  * https://stackoverflow.com/questions/25646200/python-convert-timedelta-to-int-in-a-dataframe
 * and to make it a float, 
-* `pd.to_numeric(df['tdColumn'].dt.days, downcast='float')`
+  * `pd.to_numeric(df['tdColumn'].dt.days, downcast='float')`
 
+#### flatten list of lists
 * to merge a list of lists into a single flattened list:
-* `sum(x, [])`
+  * `sum(x, [])`
 
+#### remove punctuation from string
 * routine for removing punctuation characters from a string
 
 ```python
@@ -387,5 +564,8 @@ punc_list = [p for p in string.punctuation]
 
 text = ''.join([char for char in text if char not in punc_list])
 ```
+#### nice print formatting
 
-* 
+* cool formatting trick
+* `"\n".join([....list comprehension.....]`
+  * will output each val on a new line
