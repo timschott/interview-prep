@@ -375,3 +375,17 @@ def clean_price_column(df, column):
 * https://stackoverflow.com/questions/25646200/python-convert-timedelta-to-int-in-a-dataframe
 * and to make it a float, 
 * `pd.to_numeric(df['tdColumn'].dt.days, downcast='float')`
+
+* to merge a list of lists into a single flattened list:
+* `sum(x, [])`
+
+* routine for removing punctuation characters from a string
+
+```python
+# remove punctuation here.
+punc_list = [p for p in string.punctuation]
+
+text = ''.join([char for char in text if char not in punc_list])
+```
+
+* 
