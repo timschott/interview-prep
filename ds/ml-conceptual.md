@@ -31,7 +31,6 @@
 * what is regularization?
   * L1 vs L2?
   * when to use?
-* what is a p value?
 * explain bayes theorem
 * diff bt parametric and non parametric model?
   * parametric example
@@ -42,3 +41,17 @@
 * what is type II
 * explain cross validation
   * k-fold
+* conceptual checklist:
+* what is stemming?
+* what is lemmatization?
+* when would you want to keep stop words?
+* explain word embeddings.
+* what is a confidence interval?
+* what is a p value?
+* what is statistical power?
+* why is BERT so good?
+    * transformers
+    * attention
+* how do you reduce dimensionality of textual data?
+    * PCA
+    * LDA
