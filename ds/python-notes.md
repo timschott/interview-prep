@@ -2,18 +2,77 @@
 
 ## Strings
 
-* remove whitespace and newlines
-  * `.strip()`
-* string contains
-  * `x in y`
-* string equals
-  * `x == "dog"`
+* Strings in python are immutable. 
+  * you can't replace a char at will.
+* There is no char data type - those are just strings w/ length 1.
+* Note that with these methods, you need to reassign them on the left side of the operation or the effect won't take place because that spot in memory isn't actually getting updated
 * all strings are uniformly unicode, so no need to worry about char issues
-* merge characters with `.join`
+
+
+### Cleanup and Data Information
+
+* `.strip()`
+  * remove whitespace and newlines
+* `x in y`
+  * same thing as `.contains()`
+* `.join`
+  * merge characters
   * `-.join("elvis") -> e-l-v-i-s`
   * `''.join(sorted(aaron)) -> aanor`
+* `.split(delimiter)`
+* `.startswith()`
+* `.endswith()`
+* `.isdigit()`
+* `.isalpha()`
+* `.replace()` [all]
+  * return a copy of the string where *all* occurrences of a substring are replaced
+* substrings are carried out with slices.
+* `.count(s)`
+  * # of occurrences
+* `find(s)`
+  * returns the *lowest* index of s in a string
+  * "zucchini".find("c") returns 2.
+  * so if you wanted the "last" c, you could hand off a reversed version of zucchini...
+  * `len(vegetable) - vegetable[::-1].find("c") - 1`
+    * hacky version of the above
 * 
 
+### Casing
+
+* `.upper()`
+* `.lower()`
+* `.capitalize()`
+  * uppercases the first letter
+  * `"tim schott".capitalize()` -> Tim schott.
+* `min` is the earliest alphabetical letter in a string
+* for a rough comparison of alphabetical ordering, you can directly compare letters
+  * `"apple"[0] < "zucchini"[0]`
+  * true!
+* 
+
+### Slicing
+
+* can slice just like lists
+* again, this is how you would "substring"
+* `test = "Timothy Schott"`
+* `test[2:6]`
+* -> you get `moth`
+* last letter:
+  * `string[-1]`
+* everything before the last letter
+  * `string[:-1]
+* reverse with a slice
+  * `test[::-1]` turns `Jupiter` into `'retipuJ'`
+  * so test for palindrome:
+    * x == y[::-1]
+    * test == backwards[::-1]
+* 
+
+### Formatting
+
+
+
+* you can use for
 ## Data Structures 
 
 ### Lists
