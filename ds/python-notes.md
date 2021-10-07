@@ -436,6 +436,143 @@ plt.show()
 * to just get the values, hit it with a `.values` at the end, then you can work w/ it like any other array
 * `bike_data.groupby('End station')['ride_cost'].mean().sort_values(ascending = False).values[0:5]`
 
+
+
+
+## Numpy
+
+* N dimensions all of same size
+* the size is the "shape"
+* `(N, M)` ie `(2, 3)` for a matr. w/ 2 rows and 3 cols
+
+### Numpy data types (dtypes)
+
+* `numpy.int8`, `numpy.int16` ...
+  * different types of integers
+  * unsigned int, etc
+* numpy needs to be more precise to be memory efficient
+  * same w/ `numpy.float32`...
+* `str`
+  * fixed length
+
+### Basic API
+
+* where `arr` = a numpy object
+* `.dim` 
+  * number of array dimensions
+* `.shape` 
+* - lengths of the corresponding dimensions 
+  * (rows by columns)
+* `.dtype`
+  * data type
+* `.array`
+  * creating a numpy array from a vanilla list
+  * `np.array([[1,2,3], [4,5,6], [7,8,9]])`
+* `.zeros`
+  * creating an array full of zeros
+  * `np.zeros((8,8), 'i')` 
+  * where the `i` are is for int, `d` for float
+* `.zeros_like(np_arr)`
+  * make an array of zeros w/ the same shape of a given array
+* `.identity(n)`
+  * identity matr. of shape (n,n)`
+* `.empty([2,2])`
+  * "empty" array of given size
+* `.arange(x, y, step_val)`
+  * space values between x and y (exclusive) w/ step size
+* `.random.random([x, y])`
+  * generate random array of doubles w/ shape (x, y)
+* for an integer, api is dumb
+  * `np.random.randint(100, size=(10, 10))`
+  * you enter the upper bound, then the size as a kwarg
+* `.vstack([np_one_d_arrays])`
+  * will stack them into a 2d array
+* `.resize(array, new_shape)`
+  * return a new array with the specified shape
+
+* sum all of a 2d numpy array....
+* `np.sum(np.resize(a, (1, a.shape[0] * a.shape[1])))`
+
+### Indexing and Slicing
+
+* indexing works just like if you were pulling from a matrix in a for loop
+* `nparray[2, 3]` is 3rd row, 4th column
+  * everything is 0 indexed
+* negative indexing works the same way as with a list.
+* note that they are comma separated in the brackets tho
+
+* slicing....
+* you can slice at will in each space in the commas
+* `random_2d[0:5, 1]` 
+  * first 5 rows, 2nd column
+* remember the double colon notation means "step size"
+  * `l = [1, 2, 3, 4 ,5 ,6 ,7, 8, 9, 10]`
+  * `l[::2]` -> 1, 3, 5 ,7, 9
+* you can inject this into numpy access
+  * `monalisa[::20, ::20, :]`
+    * every 20th row, every 20th column, all of that 3rd dim.
+* you can use this to reassign vals in the array by setting them equal to a scalar for instance
+
+* differences between lists and numpy arrays
+  * when you slice a list, you make a copy of it
+  * numpy slices point back to the original array
+    * this means if you modify a slice, you'll modify those vals in the original array
+  * so.... to *copy* a numpy array:
+    * `monacopy = monalist.copy()`
+* you access 2dimensional values differently
+  * lists you need more than one statement in brackets
+  * np arrays you put everything in one bracket statement
+
+### Math
+
+* `.sin`
+* `.cos`
+* `.log`
+* `.dot`
+* cool matrix math multiplication for easy dot product
+
+```python
+
+a = np.array([0, 1, 2])
+b = np.array([-1, -2, -3])
+
+a @ b # -8
+np.dot(a, b) # -8
+```
+
+### For Data Analysis
+
+* `.mean` `.nanmean`
+* `.min` `.nanmin`
+* `.max` `.nanmax`
+* `.isnan`
+* `.sum()`
+* "how many nas?"
+  * `np.sum(np.isna(np_array['col']))`
+* `.var`
+* so std dev is `.sqrt(np.var)`
+* `.correlate`
+  * Cross-correlation of two 1-dimensional sequences.
+  * lets you find similarity between two series
+  * "sliding dot product"
+* what is **smoothing**
+  * replacing time series data w/ an average of its neighbors
+  * correlate your data against a dummy mask
+  * this is how you can have a clear line vs just noise
+
+* what is **axis = 0**
+  * across all rows
+
+* numpy vs pandas
+  * numpy is geared more towards scientific computing
+  * like an improved matlab
+  * arrays
+  * strictly numerical
+* pandas is geared more towards higher level 'data science'
+  * more visual
+  * data frame / series
+  * all data types
+
 ## Functions
 
 ### Exception handling (try/except)
