@@ -212,3 +212,11 @@ while (l1 and l2):
 # Add the remaining of the lists
 sorted_list.extend(l1 if l1 else l2)
 ```
+
+### Sliding Window problems
+
+* this sort of problem is used when you need to inspect sub-lists that are inside a collection
+* "largest sum of 5 consecutive elements"
+* "length of longest substring no repeated chars"
+* sliding window is helpful because it can reduce our time complexity from something like a 2 loop solution to a linear O(n)
+* 
