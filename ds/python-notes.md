@@ -68,11 +68,6 @@
     * test == backwards[::-1]
 * 
 
-### Formatting
-
-
-
-* you can use for
 ## Data Structures 
 
 ### Lists
@@ -130,9 +125,6 @@
 * variant, `namedtuple` that can associate label with the fields
 * 
 
-
-
-
 ### Dictionaries
 
 * associates keys with items
@@ -143,6 +135,11 @@
 * merge w/ `update`
   * in place
   * `capitals.update(morecapitals)`
+  * this modifies `capitals` directly, doesn't return anything though.
+* but what if you want to merge and have the result returned?
+* `new = {**capitals, **morecapitals}`
+  * kind of makes sense 
+  * - handing off dict1 and dict2 as kwargs!
 * delete w/ `del`
   * `del capitals['United Kingdom']`
 * declare empty with `{}`
@@ -795,3 +792,15 @@ text = ''.join([char for char in text if char not in punc_list])
 * cool formatting trick
 * `"\n".join([....list comprehension.....]`
   * will output each val on a new line
+
+#### f strings
+
+* very neat new construction
+* `print(f'End is now {end}, Max length is now {maxLength}')`
+* you can directly put variables into print statements
+
+#### why are main methods in python so weird looking
+
+* "explain why its `if __name__ == '__main__':`"
+* this prevents a main method from A.py from being invoked in B.py imports A.py
+* in writing this, we ensure that this block of code only executes when we are directly running the particular file its included in.
