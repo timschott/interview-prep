@@ -1855,3 +1855,101 @@ on s.from_user = a.from_user
 and
 s.rs = a.review_score
 ```
+
+## Pratice Day
+
+### Conceptual: 
+
+when to use `INNER` vs `LEFT` join?
+
+- inner join when you only want rows with valid data from both tables (based on join criteria)
+- a left join will return every row from the left table regardless of whether there is a match in the right table
+- use case?
+  - i want every player and info about their goals. but if someone hasn’t scored, i still want their base info.
+
+what is the difference between `where` and `having`
+
+- `where` filters before selection, removing reuslts from the original table
+- `having` filters after grouping is applied
+- `having` can have aggregation functions applied; `where` can’t.
+  - ie you can use `having(avg) > 3`
+- 
+
+what is the advantage of storing data across multiple tables. can you provide an example?
+
+explain the constraints of filtering with a `where` clause that compares to a direct query
+
+- you can only filter against a single column
+
+```sql
+select business_name, review_text from yelp_reviews
+where cool = (select max(cool) from yelp_reviews);
+```
+
+what is the case statement? what is the syntax?
+
+```sql
+SELECT CASE WHEN year = 'FR' THEN 'FR'
+          WHEN year = 'SO' THEN 'SO'
+          WHEN year = 'JR' THEN 'JR'
+          WHEN year = 'SR' THEN 'SR'
+          ELSE 'No Year Data' END AS year_group,
+```
+
+### Problems 
+
+easiest
+
+* [customer details](https://platform.stratascratch.com/coding/9891-customer-details?python=)
+
+```sql
+select c.first_name, c.last_name, c.city, o.order_details from
+customers c
+left join orders o
+on c.id = o.cust_id
+order by o.order_details
+```
+
+* [popularity of hack](https://platform.stratascratch.com/coding/10061-popularity-of-hack?python=)
+
+```sql
+select employees.location, avg(survey.popularity) from 
+facebook_employees employees
+JOIN 
+facebook_hack_survey survey
+on employees.id = employee_id
+group by employees.location
+```
+
+* [salaries differences](https://platform.stratascratch.com/coding/10308-salaries-differences?python=)
+
+```
+SELECT
+(SELECT max(salary) from 
+db_employee employee
+JOIN
+db_dept dept
+on employee.department_id = dept.id
+where dept.department = 'marketing')
+- 
+(SELECT max(salary) from 
+db_employee employee
+JOIN
+db_dept dept
+on employee.department_id = dept.id
+where dept.department = 'engineering') as diff
+```
+
+* [highest salary in department](https://platform.stratascratch.com/coding/9897-highest-salary-in-department?python=)
+
+```sql
+with sub as 
+(select department, first_name, salary, max(salary) over (partition by department) as sal
+from employee)
+
+select department, first_name, salary from
+sub
+where 
+salary = sal;
+```
+hardest
