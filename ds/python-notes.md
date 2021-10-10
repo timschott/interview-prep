@@ -66,7 +66,18 @@
   * so test for palindrome:
     * x == y[::-1]
     * test == backwards[::-1]
-* 
+* you can't get penalized for an out of bounds error with slicing:
+  * instead you'll get back the maximum amount of data that *does* exist, but it'll fail in graceful way
+  * this is a cool way to work through a window problem because instead of doing
+    * `stuff[i] + stuff[i + 1]` and hoping you don't blow up on that second part,
+    * you could do `stuff[i: i+2]` and check from there.
+
+```python
+
+"tim"[3] ## Out of Bounds!
+"tim"[1:3] ## im
+"XIV"[1:3] ## IV
+```
 
 ## Data Structures 
 
@@ -95,6 +106,11 @@
   * the first argument is the index *before* which to insert
   * `a.insert(0, x)` inserts directly at the front.
 * `list.remove(x)` - drop the first instance of `x` in the list.
+  * i.e. it's searching for the *value* of x
+  * not by index!
+  * this means that if you want to remove something and you have its index, you have to feed it to remove like list.remove(list[index])
+  * this of course could cause an issue with an unsorted list.
+  * its safer in this case to use `pop`.
 * `list.pop([i])` - remove the item at a given position in the list, and return it.
   * if no index is specific, `a.pop()` removes and returns the last item in the list
 * `list.clear()` - remove everything from list.
@@ -112,6 +128,11 @@
   * `12 in nums`
 * list intersection (what in l1 is in l2)
   * `return [x for x in l1 if x in l2]`
+* smallest element of a list
+  * typically, you would use the `min()` function for this
+  * but if you want to do something like, 
+  * what is the *shortest* element of a list, you can add an extra argument for that criteria
+  * `min(my_list, key = len)` will use that function as its basis for sorting
 
 ### Tuples
 
@@ -804,3 +825,9 @@ text = ''.join([char for char in text if char not in punc_list])
 * "explain why its `if __name__ == '__main__':`"
 * this prevents a main method from A.py from being invoked in B.py imports A.py
 * in writing this, we ensure that this block of code only executes when we are directly running the particular file its included in.
+
+#### null checks
+
+* in a function, to test your params are valid, it's O.k. to do
+* `if not s: return`
+* however, once you get to equality in a loop or something, that's where you'll want to use an equals sign for primitives and then the `not in` style notation for any object comparisons
