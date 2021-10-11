@@ -1072,9 +1072,73 @@ RIGHT(date, LENGTH(date) - 11) AS cleaned_time
   * `SELECT SUBSTRING_INDEX("www.w3schools.com", ".", 1);` -> `www`
   * you could also jurry rig this using `LEFT` + `POSITION`.
 * `CONCAT` is used to combine strings together.
-* `COALESCE` - returns the first non-null argument passed from left to righ.
+  * `concat(SupplierID, ' ', SupplierID)` will combine `SupplierId` w/ a space separator
+
+#### Nulls: Coalesce and IfNull
+
+* first a general note, in sql, `NULL` = a missing unknown value and is treated differently than simply a 'empty' value like `''`
+* can check with `IS NULL` / `IS NOT NULL`
+* `NULL` = `FALSE`
+* an easy way to check for NULL's in a column is sort because it will come at the beginning of an ascending sort
+* or do `select count(*) from table where `column` is null`
+
+##### Coalesce
+
+* `COALESCE` - returns the first non-null argument passed from left to right.
+  * it's really just a variant of a case expression
+  * checks N arguments.
+
+```sql
+SELECT 
+    COALESCE(NULL, 'Hi', 'Hello', NULL) result;
+```
+
+* returns 'Hi'.
+* also works with numbers
+
+```sql
+SELECT 
+    first_name, 
+    last_name, 
+    COALESCE(phone,'N/A') phone, 
+    email
+FROM 
+    sales.customers
+ORDER BY 
+    first_name, 
+    last_name;
+```
+
+* will fill in `N/A` for any value in `phone` that is null
+* relatedly, if you want to run a query but you have nulls in numeric columns...
+* surround calculations with `COALESCE`:
+
+```sql
+SELECT
+    staff_id,
+    COALESCE(
+        hourly_rate*22*8, 
+        weekly_rate*4, 
+        monthly_rate
+    ) monthly_salary
+FROM
+    salaries;
+```
+
+* this acts like `na.rm = True`
+* note that `Coalesce` cannot be used as a piggy back off of aggregation functions
+* so you can't surround an average calculation with coalesce
+* in order to do this idea, you'd have to:
+  * remove na's with coalesce
+  * then hand that column off to be aggregated (in an outer query)
+
+##### If Null
+
 * `IFNULL` - allows you to add default behavior in a select statement if you encounter null values
   * `IFNULL(prereq, 'no prereq chosen')`
+  * it checks a single argument.
+  * so can only take in two args: the column, and the value if null
+    * ternary-like in that way
 
 ### Sub Queries
 
