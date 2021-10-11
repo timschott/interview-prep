@@ -140,6 +140,16 @@ class Node:
 * a special binary tree is a **binary search tree** in which every node fits the following rule:
   * `all left descendents <= node.value <= all right descendants`
 * during an interview, make sure any "binary" tree you're working with is a BST.
+* example of a BST node:
+
+```python
+# Definition for a binary tree node.
+class TreeNode:
+  def __init__(self, val=0, left=None, right=None):
+  self.val = val
+  self.left = left
+  self.right = right
+```
 
 #### Other varieties of Binary Trees
 
@@ -504,6 +514,74 @@ def biggest_area(height):
           window += 1
   
   return largest
+```
+
+### reverse a linked list recursively
+
+* general strategy: our 2 cases are
+  * normal nodes
+  * establishing the head node
+* okay, so like other recursive work, create a helper function and then get started
+* the helper function first accounts for making the new head node
+  * the new head node is the old tail node
+  * so we know where this is when we have `curr.next is None`
+  * we "fix" our class by setting `self.head = old tail`
+* otherwise, keep track of `next` for the subsequent call
+* and set the current node's `next` field to be the previously visited node
+  * ie in 1 -> 2 -> 3
+  * when we get to 2, next = 3, prev is 1 so we set 2's "next" to be 1 (reversing)
+* keep calling this method, using next as current and current as previous
+* note that on the very first invocation, `prev` is none. 
+  * so curr.next = prev doesn't do anything for the prior head element.
+* 
+
+```python
+def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+    
+    if head is None:
+        return
+    self.reverseUtil(head, None)
+    
+    return self.head
+    
+def reverseUtil(self, curr, prev):
+    
+    # establish end of list
+    if curr.next is None:
+        self.head = curr
+
+        # fix the head by making it point "backwards"
+        curr.next = prev
+        return
+
+    # otherwise, keep next for subsequent call
+    next = curr.next
+
+    # and do the flip
+    curr.next = prev
+
+    self.reverseUtil(next, curr)
+```
+
+### recursive power of two 
+
+```python
+def isPowerOfTwo(self, n: int) -> bool:
+    # power of two ....
+    if not n:
+        return False
+    return self.helper(n)
+
+def helper(self, i):
+    if i == 1 or i == 2:
+        ## success
+        return True
+    elif i % 2 == 0: 
+        ## recurse
+        return self.helper(i / 2)
+    else:
+        ## fail
+        return False
 ```
 
 ### Sliding Window problems
