@@ -831,3 +831,13 @@ text = ''.join([char for char in text if char not in punc_list])
 * in a function, to test your params are valid, it's O.k. to do
 * `if not s: return`
 * however, once you get to equality in a loop or something, that's where you'll want to use an equals sign for primitives and then the `not in` style notation for any object comparisons
+
+#### all permutations of list
+
+```python
+import itertools
+list(itertools.permutations([1, 2, 3]))
+```
+
+* you can also use `itertools.combinations` for combinations (order doesn't matter)
+* 
