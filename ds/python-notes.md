@@ -251,7 +251,7 @@ for _ in range(3):
 
 * the default `sort()` method is guaranteed to be stable
 * A sort is stable if it guarantees not to change the relative order of elements with the same value
-* for dictionaries, use the `sorted()` method (need to import)
+* for dictionaries, use the `sorted()` method
   * `sorted_bigrams = sorted(bigrams.items(), key=operator.itemgetter(1), reverse = True)`
   * another option would be using key = length to sort by the longest "items" val
 

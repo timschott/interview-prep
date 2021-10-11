@@ -293,6 +293,37 @@ graph = {
 ]
 ```
 
+## Recursion and Dynamic Programming
+
+* recursive solutions use previously computed work to solve a problem
+  * ie, use f(6) to solve f(7)
+* dynamic programming takes recursive approach and caches the old ones for future use
+* example of using recursion for in order traversal
+* note here i have a helper method because i want to keep track of stuff in a list
+* you might not need that if you just have a "visit" method that prints the item
+
+```python
+class Solution:
+    
+  def traverse(self, node, visit_list):
+      
+      if node: 
+          if node.left:
+              self.traverse(node.left, visit_list)
+
+          visit_list.append(node.val)
+
+          if node.right:
+              self.traverse(node.right, visit_list)    
+  
+  def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+      visit_list = []
+      
+      self.traverse(root, visit_list)
+      
+      return visit_list
+```
+
 * so, if you think about how you add numbers, we actually add them from right to left
 * so it's helpful that our linked list is backwards. 
 
@@ -310,7 +341,7 @@ def fib(n):
     elif (n == 0):
         return 0
     # second base case
-    elif (n == 1 or n == 2):
+    elif (n == 1):
         return 1
     # else recurse
     else:
@@ -448,6 +479,33 @@ while (l1 and l2):
 sorted_list.extend(l1 if l1 else l2)
 ```
 
+### biggest area from a list
+
+```python
+def biggest_area(height):
+    
+  if not height:
+      return 0
+  if len(height) == 1:
+      return numbers[0]
+  
+  largest = 0
+  for i in range(len(height)):
+      window = 1
+      while i + window < len(height):
+          # step 1: "normalize height metric" by getting min of current vs. inspect
+          h = min(height[i], height[i + window])
+          # step 2: calculate area - which is height * width where width = window size
+          area = h * window
+          # step 3: set this to largest if it's bigger!
+          largest = max(largest, area)
+          # step 4: keep the party going. move window over. 
+          # print(f'{numbers[i]}, {numbers[i + window]}')
+          window += 1
+  
+  return largest
+```
+
 ### Sliding Window problems
 
 * this sort of problem is used when you need to inspect sub-lists that are inside a collection
@@ -455,11 +513,68 @@ sorted_list.extend(l1 if l1 else l2)
 * "length of longest substring no repeated chars"
 * sliding window is helpful because it can reduce our time complexity from something like a 2 loop solution to a linear O(n)
 
-## Edge Cases, in general
+### Edge Cases, in general
 
 * possible things to think about...
   * empty
   * all same
   * off by one (car/cat) or (car/cor)
   * length one (you're looping, but someone hands you a length one list)
-* 
+
+### Object oriented in java
+
+#### Interface vs Abstract Class
+
+* classes can extend one super class but can implement multiple interfaces
+* abstract classes can have access modifiers on their fields
+* interface fields are by default public static final
+* when you extend an abstract class and update its method that is "overriding" and shows how java "polymorphism" works
+* when you implement an interface, you have to implement all of its methods (unless they have a default implementation). with an abstract class, you can choose to just adopt whatever its already defined
+* is vs has a
+
+#### Reflection
+
+* reflection just means java can do things like getClass() so you can determine this information at run time. 
+  * useful to know if you can call certain methods given a vanilla "object"
+
+#### Runtime polymorphism
+
+* this just means that when you extend a class, you can override its methods and java figures out which method to call at run time
+
+#### method overload
+
+* same method name, different number of parameters
+
+#### access modifiers
+
+* public, private, protected
+
+#### types of constructors
+
+* default constructor, parameterized constructor, copy constructor
+
+#### error vs exception
+
+* we try to account for exceptions w/ try-catch, errors are unexpected
+
+#### simple class
+
+```java
+public class LoginPage extends ParentClass implements Interface1, Interface2 {
+
+    private String name;
+
+    @Override
+    public String interfaceOneMethod() {
+        return "Interface One Made Me Do This";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
