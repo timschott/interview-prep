@@ -190,6 +190,9 @@ my_list # now it has been edited
   * `del capitals['United Kingdom']`
 * declare empty with `{}`
 * get a tuple pair of its contents w/ `dict.items()`
+* flip its keys and pairs:
+  * `rev = {v: k for k, v in dict.items()}`
+  * using a dictionary comprehension!
 
 #### Looping over a dict
 
@@ -209,7 +212,6 @@ my_list # now it has been edited
 * no duplicates
 * write w/ braces and no colons
   * `continents = {'tim', 'james', 'michael'}`
-* 
 
 ## Looping and Manipulating Structures
 
