@@ -29,6 +29,19 @@
   * a very slow algorithm like traveling salesman
 * Often, it isn't until inputs are very large that you can see the advantages of a more efficient algorithm.
 
+### Run Time Chart conceptual
+
+![runtimes](runtimes.jpg)
+
+* lists are the only structure with best case linear insert/delete
+  * because stacks, queues, and linkedlist always insert/delete at the end
+  * while lists need to dynamically expand after each operation
+* however, lists do provide constant access time when you know the index
+* if you're constantly searching, a hash map is the best solution
+* the perf of binary search trees depends on how balanced your data is
+  * a balanced tree will perform well - `O(log(n))` because you reduce the amt to search through by half at each step
+  * but a skewed tree is going to be essentially a singly linked list, so you get an inefficient linear time for each operation
+
 ## Data Structures
 
 ### Hash Table
@@ -584,6 +597,31 @@ def helper(self, i):
         return False
 ```
 
+### reverse a string, recursively
+
+* the leetcode version of this was weird because it made you do it in the confines of a list
+* in general, though, some approach should check for null, or else return method applied to the [1:] index of the string + the first char
+
+```python
+if len(s) == 0:
+    return s
+else:
+    return reverse(s[1:]) + s[0]
+```
+
+### "Validate" parens / brackets
+
+* a naive way is to use a dict of dicts to keep track of the counts
+* but the issue with doing that is you aren't able to keep track of when in a string different brackets are used
+* so you lose the idea that `"([)]"` needs to be false
+* because you can't keep track of context
+* strategy:
+  * 1 - validate open and close counts matches
+  * 2 - validate ordering matches
+    * what is the definition of proper ordering?
+    * an even number of chars between same tags?
+    * only pairs
+
 ### Sliding Window problems
 
 * this sort of problem is used when you need to inspect sub-lists that are inside a collection
@@ -598,61 +636,3 @@ def helper(self, i):
   * all same
   * off by one (car/cat) or (car/cor)
   * length one (you're looping, but someone hands you a length one list)
-
-### Object oriented in java
-
-#### Interface vs Abstract Class
-
-* classes can extend one super class but can implement multiple interfaces
-* abstract classes can have access modifiers on their fields
-* interface fields are by default public static final
-* when you extend an abstract class and update its method that is "overriding" and shows how java "polymorphism" works
-* when you implement an interface, you have to implement all of its methods (unless they have a default implementation). with an abstract class, you can choose to just adopt whatever its already defined
-* is vs has a
-
-#### Reflection
-
-* reflection just means java can do things like getClass() so you can determine this information at run time. 
-  * useful to know if you can call certain methods given a vanilla "object"
-
-#### Runtime polymorphism
-
-* this just means that when you extend a class, you can override its methods and java figures out which method to call at run time
-
-#### method overload
-
-* same method name, different number of parameters
-
-#### access modifiers
-
-* public, private, protected
-
-#### types of constructors
-
-* default constructor, parameterized constructor, copy constructor
-
-#### error vs exception
-
-* we try to account for exceptions w/ try-catch, errors are unexpected
-
-#### simple class
-
-```java
-public class LoginPage extends ParentClass implements Interface1, Interface2 {
-
-    private String name;
-
-    @Override
-    public String interfaceOneMethod() {
-        return "Interface One Made Me Do This";
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-```
