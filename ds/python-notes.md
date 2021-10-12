@@ -112,13 +112,14 @@
   * this of course could cause an issue with an unsorted list.
   * its safer in this case to use `pop`.
 * `list.pop([i])` - remove the item at a given position in the list, and return it.
-  * if no index is specific, `a.pop()` removes and returns the last item in the list
+  * if no index is specific, `a.pop()` removes and returns the **last** item in the list
+  * so for a stack/queue, you'd be using `struct.pop(0)`
 * `list.clear()` - remove everything from list.
 * In general, all mutable data structures do not have `insert`, `remove`, `sort` etc. methods that return anything
   * intentional
 * How to use a list as a stack? 
   * add an item to the top with `append()`
-  * remove it from the top with `pop()`
+  * remove it from the top with `pop(0)`
 * How to use a list as a queue?
   * in general, its inefficient to use lists as a queue because the appends and pops from the end of the list cause every element in the list to have to shift by one
     * think about, for instance, if you have 10 people lined up, and the second person gets out of line. everyone after them has to shift up a spot 
@@ -133,6 +134,30 @@
   * but if you want to do something like, 
   * what is the *shortest* element of a list, you can add an extra argument for that criteria
   * `min(my_list, key = len)` will use that function as its basis for sorting
+* note that to update a list "in place" you need to actually touch the elements
+  * `list[:] = [mess w/ it]` will do that
+  * but `list[] = [mess w/ it]` won't since you arent actually touching the stuff inside
+
+```python
+my_list = [1,2,3,4,5]
+def test_func(a_list):
+    a_list = [num * 2 for num in a_list]
+    return a_list
+
+test_func(my_list)
+# [2, 4, 6, 8, 10]
+
+my_list # note how it has note actually been updated.
+# [1, 2, 3, 4, 5]
+def test_func_touching_elements(a_list):
+    a_list[:] = [num * 2 for num in a_list]
+    return a_list
+
+test_func_touching_elements(my_list)
+### [2, 4, 6, 8, 10]
+my_list # now it has been edited
+### [2, 4, 6, 8, 10]
+```
 
 ### Tuples
 
@@ -840,4 +865,110 @@ list(itertools.permutations([1, 2, 3]))
 ```
 
 * you can also use `itertools.combinations` for combinations (order doesn't matter)
-* 
+
+### Object oriented in java
+
+#### Interface vs Abstract Class
+
+* classes can extend one super class but can implement multiple interfaces
+* abstract classes can have access modifiers on their fields
+* interface fields are by default public static final
+* when you extend an abstract class and update its method that is "overriding" and shows how java "polymorphism" works
+* when you implement an interface, you have to implement all of its methods (unless they have a default implementation). with an abstract class, you can choose to just adopt whatever its already defined
+* is vs has a
+
+#### Reflection
+
+* reflection just means java can do things like getClass() so you can determine this information at run time. 
+  * useful to know if you can call certain methods given a vanilla "object"
+
+#### Runtime polymorphism
+
+* this just means that when you extend a class, you can override its methods and java figures out which method to call at run time
+
+#### method overload
+
+* same method name, different number of parameters
+
+#### access modifiers
+
+* public, private, protected
+
+#### types of constructors
+
+* default constructor, parameterized constructor, copy constructor
+
+### Object Oriented in Python
+
+#### simple class
+
+```java
+public class LoginPage extends ParentClass implements Interface1, Interface2 {
+
+    private String name;
+
+    @Override
+    public String interfaceOneMethod() {
+        return "Interface One Made Me Do This";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+#### writing classes
+
+```python
+class Node:
+  def __init__(self, data):
+    self.data = data
+    self.children = []
+```
+
+* provide the class name
+* provide a parameterized constructor
+  * can contain positional and functional parameters
+  * note that in this constructor you can create default fields
+  * this constructor encapsulates *instance* variables
+* access the "attributes" (fields) w/ the dot notation
+* when you add a function inside a class, you can invoke it with normal function syntax
+* also you can add Object level "class" variables that apply to all instances of your class
+  * so here, every `Person` will have `.species = Human`.
+* within a class, `self` is basically the same thing as `this`
+
+
+```python
+class Person:
+
+  species = 'Human' # shared by all Person objects
+
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
+    self.wallet = []
+  
+  def f(self):
+    return 'hello world'
+
+x = Person("timothy", 12)
+x.age # 12
+
+x.f() # 'hello world'
+```
+
+#### is python pass by value or pass by reference?
+
+* mutable objects are automatically passed by reference
+* high level, people call it "pass by assignment
+
+### Odds and Ends, Java 
+
+#### error vs exception
+
+* we try to account for exceptions w/ try-catch, errors are unexpected
