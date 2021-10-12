@@ -621,6 +621,24 @@ else:
     * what is the definition of proper ordering?
     * an even number of chars between same tags?
     * only pairs
+* i was able to get it given the condition that we only go from outside in
+* ie `{([])}`
+  * just compare if outer chars match, recurse while we still have.
+* but that's not robust enough to an example like `{}[]()`.
+* *much easier is just to use replace all*... 
+  * because as we iteratively replace what's inside, the outer things will resolve
+  * their lookup table is *closed* which is a big difference from my approach
+  * a closed lookup table breaks down the problem to its smallest area
+  * and helps us with both `{}()` and `{()}`
+    * break down problem into its simplest smallest status
+
+```
+brackets = ['()', '{}', '[]']
+while any(x in my_string for x in brackets):
+    for br in brackets:
+        my_string = my_string.replace(br, '')
+return not my_string
+```
 
 ### Sliding Window problems
 
@@ -628,6 +646,16 @@ else:
 * "largest sum of 5 consecutive elements"
 * "length of longest substring no repeated chars"
 * sliding window is helpful because it can reduce our time complexity from something like a 2 loop solution to a linear O(n)
+
+### Problem Approach, in general
+
+* what is the easiest solution?
+* what would a non-computer do to solve this?
+* only try to generalize from a simple solution
+  * *not* just off the cuff
+* does the problem repeat itself, in a way
+  * this is a tip off something like recursion may come in handy
+  * or at the very least, iterate until it's solved (with a while loop)
 
 ### Edge Cases, in general
 
