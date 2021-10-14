@@ -117,6 +117,8 @@
 * `list.clear()` - remove everything from list.
 * In general, all mutable data structures do not have `insert`, `remove`, `sort` etc. methods that return anything
   * intentional
+* combine two lists
+  * `list_1 + list_2`
 * How to use a list as a stack? 
   * add an item to the top with `append()`
   * remove it from the top with `pop(0)`

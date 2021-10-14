@@ -19,7 +19,7 @@ references:
   * **high variance low bias**
     * its *Too* good at our learning problem
   * how to address?
-    * regulariazation
+    * regularization
     * more training data
     * parameter tuning
 * what is underfitting?
