@@ -1,8 +1,7 @@
 ## ML Conceptual
 
-references:
+* references:
   * https://towardsdatascience.com/data-science-interview-guide-4ee9f5dc778
-  * 
 
 * explain the difference between supervised and unsupervised learning
   * supervised learning separates data into pre-determined human defined categories based on labels
@@ -45,6 +44,7 @@ references:
   * number of true positives / true positives + false positives
 * what is recall?
   * number of true 
+* why do we sample?
 * what is bootstrapping?
   * iteratively resampling your dataset in order to estimate population metrics
   * when to use it?
@@ -54,7 +54,11 @@ references:
     * example: cross entropy loss for classification tasks
 * what is ensemble learning?
   * what is bagging?
-* how do you discover outliers in your data?
+* how to summarize your data?
+  * how do you discover outliers in your data?
+  * what assumptions can you make e.g. when can we say it's "normal"
+* what is the central limit theorem?
+* what is the law of large numbers?
 * models to know...
   * k means
   * svm
@@ -63,16 +67,21 @@ references:
   * logistic
   * linear
     * what assumptions do you make when using linear models?
+    * what features?
   * knn
   * topic modeling
   * naive bayes
 * what is regularization?
   * L1 vs L2?
   * when to use?
+* diff bt linear and logistic?
 * explain bayes theorem
+  * what is prior?
+  * what is posterior?
 * diff bt parametric and non parametric model?
   * parametric example
   * non parametric example
+* how do we evaluate a model?
 * explain a statistical significance test
   * t - test rundown (a/b)
 * what is type I
@@ -80,11 +89,12 @@ references:
 * explain cross validation
   * leave one out
   * k-fold
-* conceptual checklist:
 * what is stemming?
 * what is lemmatization?
 * when would you want to keep stop words?
 * explain word embeddings.
+* what is chi squared
+* what is ANOVA
 * what is a confidence interval?
 * what is a p value?
 * what is statistical power?
@@ -100,3 +110,4 @@ references:
 * what is a (non linear) activation function
   * a non linear activation function transforms inputs to a non linear space which allows a neural network to patterns from a non linear version of the input
   * this allows it to make sophisticated decisions across boundary lines that aren't constrained by linearity
+* what is A/B testing
