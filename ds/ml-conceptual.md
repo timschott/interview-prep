@@ -44,6 +44,9 @@
   * number of true positives / true positives + false positives
 * what is recall?
   * number of true 
+* What is RMSE?
+* What is SE?
+* What is SSE?
 * why do we sample?
 * what is bootstrapping?
   * iteratively resampling your dataset in order to estimate population metrics
@@ -58,6 +61,8 @@
   * how do you discover outliers in your data?
   * what assumptions can you make e.g. when can we say it's "normal"
 * what is the central limit theorem?
+  * as number of independent random observations grows large enough (n > 30), the distribution of a sample set can be be approximated by the Normal Distribution
+  * for example, 1000 fair coin flips can be modeled by a normal dist N~(500, 250)
 * what is the law of large numbers?
 * models to know...
   * k means
@@ -73,11 +78,36 @@
   * naive bayes
 * what is regularization?
   * L1 vs L2?
+    * L1 = LASSO
+      * least absolute squares
+      * adds an absolute value of penalty
+      * because of this, it can completely remove a coefficient by setting its value to zero
+    * L2 = Ridge Regression
+      * adds a squared magnitude of penalty
   * when to use?
+    * regularization prevents a single feature from being too large during model training. it can be used when you need to prevent overfitting and want your model to generalize better.
+    * we would use L1 LASSO during feature selection because it can completely drop unneeded coefficients
 * diff bt linear and logistic?
+  * linear regression is used to separate data into classes on a continuous scale
+    * uses a linear function, generalized form of w = xt + b, produces a real number value
+  * logistic regression is used to separate data into categorical groups
+    * uses a logistic function, the sigmoid, to estimate the *probability* of belonging to a group (bt 0 and 1)
 * explain bayes theorem
+  * bayes theorem lets us leverage information we know about an event to determine the probability that a conditional event we have not observed will take place
   * what is prior?
+    * prior probability is some evidence we use to model an event before it takes place
   * what is posterior?
+    * the probability distribution conditional on evidence from the survey, the outcome that you are after
+* diff bt independent and mutually exclusive?
+  * two events that are independent if prior knowledge of A occurring has no bearing on B's outcome
+    * P(A and B) = P(A) * P(B)
+    * P(A|B) = P(A)
+    * P(B|A) = P(B)
+    * for example, drawing marbles but replacing them after each pull
+  * two events are mutually exclusive if the occurrence of A prevents B from taking place
+    * P(A or B) = P(A) + P(B)
+    * P(A and B) = 0
+    * for example, team A wins and team B wins
 * diff bt parametric and non parametric model?
   * parametric example
   * non parametric example
@@ -111,3 +141,8 @@
   * a non linear activation function transforms inputs to a non linear space which allows a neural network to patterns from a non linear version of the input
   * this allows it to make sophisticated decisions across boundary lines that aren't constrained by linearity
 * what is A/B testing
+  * A/B testing is just another way of setting up a hypothesis test.
+  * average revenue per user, Gaussian
+  * `t.test(data1, data2, var.equal=TRUE)	`
+  * use a t-test
+* 
