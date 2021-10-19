@@ -222,7 +222,8 @@
 * which t-test do i use?
   * one-sample should be used to compare the *mean* of 1 sample to a *known* value
   * two-sample should be used to compare *two* means from *two* samples
-    * if equal variances (assumed): common population error pooling
+    * if equal sample sizes and equal variances (assumed): common population error pooling
+    * if not: welch's t test - https://en.wikipedia.org/wiki/Welch%27s_t-test
 * what are degrees of freedom
   * number of independent pieces of info
   * typically, N-1
