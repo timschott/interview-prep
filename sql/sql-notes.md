@@ -2011,7 +2011,7 @@ hardest
 
 ### Number of Emails per User, in label categories
 
-https://platform.stratascratch.com/coding/10068-user-email-labels?python=
+* https://platform.stratascratch.com/coding/10068-user-email-labels?python=
 
 * end output is userid, number of Promotion emails, number of Shopping emails, number of Social emails
 * my intial stab was overly complicated

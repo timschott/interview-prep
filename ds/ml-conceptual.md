@@ -228,11 +228,11 @@
   * number of independent pieces of info
   * typically, N-1
 * how to calculate a z score?
+  * when **X** is a single random variable and we are pulling from a dist:
   * `z = (x-μ)/σ`
-  * but that's when X is a single random variable and we are pulling from a dist
-  * when we are sampling, we are randomly drawing variables from a distribution `~N(μ, σ)`
-  * this new distribution we recreate will have the same mean, but a different variance
-  * so, a z score for a sample distribution `~~N(μ, σ^2/n)` is:
+  * when we are *sampling*, we are randomly drawing variables from some distribution `~N(μ, σ)`
+  * this new distribution will have the same mean, but a different variance
+  * so, a z score from a *sample distribution* `~~N(μ, σ^2/n)` is:
   * `z = (𝑋-μ)/(σ/√𝑛)`
   * remember that the point of the z score is to give us a *standardized* score
     * that's why we have that denominator change -- we are taking the square root of all of `σ^2/n`, as thats our variance, and square root of variance is standard dev
@@ -254,7 +254,10 @@
     * note that you might have to adjust if you have a 2 tailed test
   * popular critical value: alpha is .05, z = 1.96
 * what is type I
+  * type I error is a false positive
 * what is type II
+  * type II error is a false negative
+  * 
 * what is statistical power
 * what is a significance level
 * what is a confidence interval?
