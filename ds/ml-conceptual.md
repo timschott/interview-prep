@@ -228,7 +228,8 @@
   * if you draw large, random samples from a populations, the means of those samples will be distributed normally around the population mean
   * you can game this out by noting the variance of the sample mean drops to 0 as the number of samples becomes very large
   * for example, 1000 fair coin flips can be modeled by a normal dist N~(500, 250)
-* what is the law of large numbers?
+* what is the law of large numbers? [todo]
+  * sample gets better as sample size increases
 * why do we sample?
 * what is bootstrapping?
   * iteratively resampling your dataset in order to estimate population metrics
@@ -300,9 +301,10 @@
   * when we fail to reject the null hypothesis when it is false
   * ie, we fail to observe a statistical difference when there is one!
   * (telling a quite-pregnant woman she is not pregnant)
+  * probability is Beta
 * what is statistical power
-  * the probability of making a type II error, of failing to accept the alternative hypothesis when there is enough evidence to accept it is not occuring by random chance
-    * also known as Beta
+  * the probability of *not* making a type II error, of failing to accept the alternative hypothesis when there is enough evidence to accept it is not occurring by random chance
+    * 1 - Beta
 * what is a significance level
   * the significance level represents the probability of rejecting the null hypothesis when it is true
 * what is a confidence interval?
@@ -386,6 +388,14 @@
   * using the same style of question and answer learning that language models often use in their training phase when you are going through your task of interest
   * adjusting your objective like sentiment analysis of part of speech tagging to be solvable via "prompts"
     * masking, permutation, english + non-english pairings, NER
+* sig testing in NLP, why do we have to be careful?
+  * don't use a t-test if we aren't working with an average measure
+  * don't assume data is iid
+    * (text data from same author is not independent)
+  * mixing k fold and significance tests
+    * you need to be calculating a p-val / checking null hypoth for each fold
+  * using a t-test for classification
+    * there are better tests for this
   
 ## Resume
 
