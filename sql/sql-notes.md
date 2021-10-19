@@ -1616,11 +1616,9 @@ select * from cte_1_name union cte_2_name
   * then, use a sub query, and only draw rows that have a row number = to 1.
   * its robust to shifts in the data because its always going to recalculate, vs. if you're just grouping on a bunch of putatively duplicated columns that could potentially change in the future
 
-
   * Remember that the partition by / group by scheme is necessary to create a *rolling* average. 
     * In some instances, you are okay with attaching the average, at large, total to each row
-
-```
+```sql
 select department, first_name, salary,
 avg(salary) over (partition by department) as avg
 from employee
@@ -1633,7 +1631,6 @@ from employee
 
 * Recall `Having`...
   * to be used when we want to filter out something that is grouped
-
 ```sql
 select neighbourhood, avg(beds) as avg_beds
 from airbnb_search_details
@@ -1651,7 +1648,6 @@ order by avg_beds desc
   * after that, however, you can't use a normal where
   * because you can't take that avg value and stick it in a where clause
   * that's why we need having. to do a *post-aggregation* filtering
-
 ```sql
 select city
 from zillow_transactions
@@ -1667,7 +1663,6 @@ having avg(mkt_price) > (select avg(mkt_price) from zillow_transactions)
   * `2 * 1.0 / 5 = 0.4` as expected.
 
 * In cases where you want to have a maximum within a group, it can make sense to use `RANK`.
-
 ```sql
 WITH sub as (select * from fb_eu_energy
 UNION
@@ -1685,7 +1680,6 @@ group by date
 order by total_energy desc ) s2
 where s2.r = 1
 ```
-
 * Notice that here, I don't partition in the window function
 * That's because I am already applying a group by because there is more than one row per actual date in the table
   * it all depends on how your data is laid out
@@ -1856,9 +1850,7 @@ group by f1.post_date
 * a way to split a column on a delimeter
 * e.g. Sushi;New American;Casual into 3 separate values
 * note that this gives you back the new set as a big column so  you can't just directly append it onto your data
-
-`SELECT unnest(string_to_array(categories, ';')) AS category`
-
+* `SELECT unnest(string_to_array(categories, ';')) AS category`
 * note that you have to use `string_to_array` or else it won't work.
 
 ### Index
@@ -1910,7 +1902,6 @@ group by title, p.budget
 * if you have a column where you have id's and the left, and values on the right, and you need to dedupe...
 * like if you had (1, aus), (1, usa), (1, aus) and you wanted just (1, aus) and (1, usa) back....
 * remember that `DISTINCT` gets applied across the entire from statement.
-
 ```sql
 select distinct a.from_user, a.nationality from sub s
 join
@@ -2017,3 +2008,67 @@ where
 salary = sal;
 ```
 hardest
+
+### Number of Emails per User, in label categories
+
+https://platform.stratascratch.com/coding/10068-user-email-labels?python=
+
+* end output is userid, number of Promotion emails, number of Shopping emails, number of Social emails
+* my intial stab was overly complicated
+* first, get counts for each user and label
+* group by user, label, then count the labels
+```sql
+SELECT mails.to_user,
+          labels.label,
+          COUNT(*) AS cnt
+   FROM google_gmail_emails mails
+   INNER JOIN google_gmail_labels labels ON mails.id = labels.email_id
+   GROUP BY mails.to_user,
+            labels.label
+```
+* now that we have the counts for *every* label, we can use a case statement to draw out the ones we care about
+* importantly, we can *also* use this case statement to establish a 0 for entries that are missing
+* ie, from this type of output, give me back the counts for Shopping,Promotion,Social (w/ 0 if it is not there)
+```
+32ded68d89443e808	Custom_1	5
+6b503743a13d778200	Shopping	1
+2813e59cf6c1ff698e	Custom_2	4
+157e3e9278e32aba3e	Shopping	1
+7cfe354d9a64bf8173	Promotion	2
+```
+* so here, the case statement finds us our label of interest and grabs the count if we find it
+* otherwise, just mark it as a 0
+* without any aggregation, it returns every possible label 
+  * its count for Promotion, then 0 otherwise
+
+```sql
+select to_user, label, case when label = 'Promotion' then cnt else 0 end as test
+from sub
+order by to_user
+/*
+157e3e9278e32aba3e	0 #something else
+157e3e9278e32aba3e	0 #something else
+157e3e9278e32aba3e	1 #this is promotion! 
+...
+157e3e9278e32abazz	0 #something else
+157e3e9278e32abazz	0 #this is promotion! 
+*/
+```
+* so, that's why we have an additional aggregation steps:
+  * group by the user, because we only want 1 row per person
+  * and to do that, we'll also cleverly sum the output of the case column
+  * because....
+    * everything is 0 *except* promotion (which could also be 0)
+    * so summing that just hands us back whatever value is in promotion (again, either the value, or 0)
+    * (summing all 0's is still 0, summing 1 and all 0's is still 1)
+* tying it all together, the final output for grabbing "promotion" count per user
+
+```sql
+select to_user, 
+sum(case when label = 'Promotion' then cnt else 0 end) as Promotion_Count_With_Zeros
+from sub
+group by to_user
+```
+
+* from here, just do this for the other labels of interest
+* note that this is also a smart way to establish a "pivot" -- use a case statement for each Column you want to make
