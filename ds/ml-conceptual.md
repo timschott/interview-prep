@@ -255,15 +255,28 @@
   * popular critical value: alpha is .05, z = 1.96
 * what is type I
   * type I error is a false positive
+  * the error of rejecting the null hypothesis when it is true
+  * ie, we accept an alternative hypothesis even though it can be attributed to chance!
+  * its probability is Alpha
+  * (telling a man he is pregnant)
 * what is type II
   * type II error is a false negative
-  * 
+  * when we fail to reject the null hypothesis when it is false
+  * ie, we fail to observe a statistical difference when there is one!
+  * (telling a quite-pregnant woman she is not pregnant)
 * what is statistical power
+  * the probability of making a type II error, of failing to accept the alternative hypothesis when there is enough evidence to accept it is not occuring by random chance
+    * also known as Beta
 * what is a significance level
+  * the significance level represents the probability of rejecting the null hypothesis when it is true
 * what is a confidence interval?
-  * a confidence interval
+  * gives us a measure of how confident we are that the statistic of interest falls in that interval 
+  * x% of confidence intervals we generate will capture the parameter
+  * we are x% confident in the process used to generate our interval
+  * how to calculate?
+  * (sample mean) +/- margin of error
 * what is margin of error?
-  * 𝑋 +/- critical val * standard deviation/standard error
+  * critical val * standard deviation/standard error
     * where critical value is z-score at sig level!
     * standard dev or standard error depending on what you are working with
 * what is a p value?
@@ -274,17 +287,22 @@
   * A/B testing is just another way of setting up a hypothesis test.
   * average revenue per user, Gaussian
   * `t.test(data1, data2, var.equal=TRUE)	`
-  * use a t-test
-  * 
+  * use a z-test, t-test, depending on the information you have about your samples
 
 ## NLP
 
 * what is stemming?
-  * 
+  * [todo]
 * what is lemmatization?
-  * 
+  * [todo]
 * when would you want to keep stop words?
+  * in certain applications like coreference resolution or part of speech tagging, stop words could be very important
+  * for example we would want to keep determiners like 'an' 
 * explain word embeddings.
+  * word embeddings provide a nuanced representation of words
+  * they serve as the initial input to many NLP problems
+  * to construct word embeddings, packages like GLoVE and word2vec 
+  * [todo]
 * what is chi squared
   * tests whether there is a statistically significant difference between observed and expected frequencies
   * for NLP: could use chi squared on tf-idf scores
@@ -294,11 +312,15 @@
 * how do you reduce dimensionality of textual data?
     * PCA
       * explain PCA
+      * [todo]
     * LDA
       * matrix decomposition
       * removing unneeded columns
+      * [todo]
 * compare an contrast BERT and GPT-3
+  * [todo]
 * explain how a transformer works
+  * [todo]
 * you just created an NLP model. what are some ways you can see how well it performs?
 * what is zero-shot learning?
   * leveraging a language model by directly running test cases w/ no "fine-tuning" / domain-specific training
