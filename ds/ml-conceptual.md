@@ -92,8 +92,10 @@
   * `√(Σ(ŷi – yi)^2)) / n)`
   * on the same scale as output 
 
-#### Error Measures
+#### Error and Error Measures
 
+* where does error come from?
+  * [todo]
 * What is SE?
   * standard error = variation of sample statistics
   * formula: `SE = s / sqrt(n)`
@@ -139,6 +141,11 @@
   * knn
   * topic modeling
   * naive bayes
+  * neural network
+    * simple
+    * fully-connected
+    * CNN
+    * LSTM
 
 ### Strategies and Discussion
 
@@ -194,6 +201,11 @@
   * most general term for the function you optimize in training
   * MLE 
   * Negative Log Likelihood 
+* what is back propagation?
+* what is pooling?
+* what is convolution?
+* what is dropout?
+* what is "fully connected"?
 
 ## Probability
 
@@ -224,7 +236,9 @@
     * very useful when you have a constrained/limited sized dataset but still want to carry out advanced analysis
 
 
-### Testing
+### Hypothesis Testing
+
+#### Procedure
 
 * explain a hypothesis test
   * test rundown
@@ -245,9 +259,6 @@
   * two-sample should be used to compare *two* means from *two* samples
     * if equal sample sizes and equal variances (assumed): common population error pooling
     * if not: welch's t test - https://en.wikipedia.org/wiki/Welch%27s_t-test
-* what are degrees of freedom
-  * number of independent pieces of info
-  * typically, N-1
 * how to calculate a z score?
   * when **X** is a single random variable and we are pulling from a dist:
   * `z = (x-μ)/σ`
@@ -269,6 +280,10 @@
   * is the retrieved test statistic larger (/smaller) than the critical value
   * if so, reject null hypothesis
 * how to calculate interval of acceptance from sig level
+  * [todo]
+
+#### Hypothesis Testing Conceptual
+
 * what is a critical value
   * the threshold that - if exceeded - leads to the conclusion that the difference between the sample mean and the (hypothesized) population mean is large enough to reject the null hypothesis
   * = to value whose probability of occurrence is <= alpha
@@ -309,6 +324,11 @@
   * average revenue per user, Gaussian
   * `t.test(data1, data2, var.equal=TRUE)	`
   * use a z-test, t-test, depending on the information you have about your samples
+  * most of the time we're not going to know the population standard deviation because this is real-world data
+  * so the t test comes in handy for those situations
+* what are degrees of freedom
+  * number of independent pieces of info
+  * typically, N-1
 
 ## NLP
 
@@ -316,6 +336,11 @@
   * [todo]
 * what is lemmatization?
   * [todo]
+* what is name entity recognition?
+  * [todo]
+* what is coreference resolution?
+  * [todo]
+* in today's world, what is the most robust way to do sentiment analysis?
 * when would you want to keep stop words?
   * in certain applications like coreference resolution or part of speech tagging, stop words could be very important
   * for example we would want to keep determiners like 'an' 
@@ -328,8 +353,14 @@
   * tests whether there is a statistically significant difference between observed and expected frequencies
   * for NLP: could use chi squared on tf-idf scores
 * why is BERT so good?
-    * transformers
-    * attention
+  * word piece
+  * pre-training
+  * bidirectional
+  * masking
+  * next sentence prediction
+  * attention
+  * transformers
+  * fine-tuning
 * how do you reduce dimensionality of textual data?
     * PCA
       * explain PCA
@@ -343,6 +374,12 @@
 * explain how a transformer works
   * [todo]
 * you just created an NLP model. what are some ways you can see how well it performs?
+  * mixture of standard error / recall measures (accuracy, F1, ROC) and task specific like the stanford question and answer data set (SQuAD)
+  * you should also try to look at how efficient it is 
+    * - how many parameters have you added versus baseline? 
+    * is there a significant gain for x amt of increase in training time / corpus size?
+      * if it takes 2 weeks to train your model, it's going to be hard to iteratively retrain it with new data
+  * also, can it generalize? can it be applied to other tasks>
 * what is zero-shot learning?
   * leveraging a language model by directly running test cases w/ no "fine-tuning" / domain-specific training
 * what is prompt-based learning?
@@ -441,3 +478,14 @@
 * Classes?
   * applied NLP
   * next semester, hopefully TA
+
+## Current, Interesting Papers
+
+* wilmot and keller, 2021
+  * Memory and Knowledge Augmented Language Models for Inferring Salience in Long-Form Stories
+  * http://arxiv.org/abs/2109.03754
+  * salience detection with RAG
+* bender et al, 2021
+  * Stochastic Parrots
+  * https://dl.acm.org/doi/pdf/10.1145/3442188.3445922
+  * are lang models too big?
