@@ -3,10 +3,6 @@
 * references:
   * https://towardsdatascience.com/data-science-interview-guide-4ee9f5dc778
 
-* explain the difference between supervised and unsupervised learning
-  * supervised learning separates data into pre-determined human defined categories based on labels
-  * unsupervised learning separates data without the use of labels.
-
 ## Data Exploration
 
 * how to summarize your data?
@@ -18,6 +14,7 @@
 * how do you detect nulls in your data?
   * R can use `is.na`, we can fill in gaps
   * `ozone_rep = airquality['Ozone'].fillna(0.0)`
+  * `data.replace('?',0, inplace=True)`
   * SQL will automatically remove NULL values from aggregations, but you can some them by checking `IS NULL`
 * should you replace nulls in your data? what are your options?
   * you can replace them with 0, but this could throw off average calculations
@@ -116,35 +113,27 @@
   * sum of squares regression
   * the sum of the squared differences between the predicted data points (`ŷi`) and the mean of the response var (`ȳ`)
   * `SSR = Σ(ŷi – ȳ)^2`
-
-## Sampling
-
-* what is the central limit theorem?
-  * if you draw large, random samples from a populations, the means of those samples will be distributed normally around the population mean
-  * you can game this out by noting the variance of the sample mean drops to 0 as the number of samples becomes very large
-  * for example, 1000 fair coin flips can be modeled by a normal dist N~(500, 250)
-* what is the law of large numbers?
-* why do we sample?
-* what is bootstrapping?
-  * iteratively resampling your dataset in order to estimate population metrics
-  * when to use it?
-    * very useful when you have a constrained/limited sized dataset but still want to carry out advanced analysis
-
+  * 
 ## Machine Learning
 
-### Models
+* explain the difference between supervised and unsupervised learning
+  * supervised learning separates data into pre-determined human defined categories based on labels
+  * unsupervised learning separates data without the use of labels.
+
+### Models [todo]
 
 * models to know...
   * k means
   * svm
   * decision tree
+  * random forest
   * hierarchical clustering
   * logistic
   * linear
     * what assumptions do you make when using linear models?
     * what features?
-  * what is homoskedasticity
-  * what is ANOVA
+    * what is homoskedasticity
+  * what is ANOVA [tod[]]
     * analysis of variance
     * what are the measures it produces
   * knn
@@ -153,14 +142,23 @@
 
 ### Strategies and Discussion
 
+* very high level: describe the steps of a learning pipeline
+  * [todo]
 * what is ensemble learning?
-* what is bagging?
-* diff bt parametric and non parametric model?
-  * parametric example
+  * combining different models in order to produce more robust outcomes
+  * bagging
+    * bootstrap and build multiple classifiers, one for each sample, then combine classifiers
+  * boosting
+    * "sequential learning"
+    * XGBoost
+    * ADAboost
+* diff bt parametric and non parametric model? [todo]
+  * parametric example 
   * non parametric example
-* explain cross validation
+* explain cross validation [todo]
   * leave one out
   * k-fold
+* explain grid search [todo]
 * what is the curse of dimensionality?
   * bigger dims, data becomes sparse
   * and # of model configurations grows exponentially
@@ -186,7 +184,16 @@
     * the probability distribution conditional on evidence from the survey, the outcome that you are after
 * what is a loss function?
   * a loss function measures the ability of your model to accurately make predictions by comparing your results to their true labels
-    * example: cross entropy loss for classification tasks
+    * cross entropy loss for NNs
+    * hinge loss for SVM 
+  * typically described in terms of the performance on a *single* data point
+* what is a cost function?
+  * similar to loss function, but typically refers to the average loss of the whole training 
+  * Mean Square Error
+* what is an objective function?
+  * most general term for the function you optimize in training
+  * MLE 
+  * Negative Log Likelihood 
 
 ## Probability
 
@@ -202,6 +209,20 @@
     * for example, team A wins and team B wins
 
 ## Statistics
+
+### Sampling
+
+* what is the central limit theorem?
+  * if you draw large, random samples from a populations, the means of those samples will be distributed normally around the population mean
+  * you can game this out by noting the variance of the sample mean drops to 0 as the number of samples becomes very large
+  * for example, 1000 fair coin flips can be modeled by a normal dist N~(500, 250)
+* what is the law of large numbers?
+* why do we sample?
+* what is bootstrapping?
+  * iteratively resampling your dataset in order to estimate population metrics
+  * when to use it?
+    * very useful when you have a constrained/limited sized dataset but still want to carry out advanced analysis
+
 
 ### Testing
 
@@ -328,3 +349,95 @@
   * using the same style of question and answer learning that language models often use in their training phase when you are going through your task of interest
   * adjusting your objective like sentiment analysis of part of speech tagging to be solvable via "prompts"
     * masking, permutation, english + non-english pairings, NER
+  
+## Resume
+
+* Work
+  * ETL for Janes?
+    * transformed CMS data (Rich text, particularly) from roughly HTML/JSON to XML
+    * added metadata / other info from external APIs
+    * DITA compliant
+    * then dropped in s3
+* Thesis
+  * tokenization?
+    * word, sentence, paragraph
+    * by hand, rules based / regex
+    * probably should have used a package, there
+  * feature engineering
+    * 31 features like, punctuation per line, syllables per word, etc
+  * Decision Trees
+    * used random forests for feature selection via the variable importance metric
+    * a random forest was used because ensemble learning is an effective way to combine the output of many decision trees
+      * prevents overfitting
+      ```R
+          m <- randomForest(new_df[,-31], new_df$label2, 
+                        sampsize = round(0.8*(length(new_df$label2))),ntree = 500, 
+                        mtry = sqrt(30), importance = TRUE)
+      ```
+  * SVM
+    * used SVM because I had just learned that in class and wanted a binary separation of my data
+      * used LOOCV since I had a pretty small data set
+      ```R
+      folds <- cvFolds(NROW(sub), K=50)
+      results <- c(0)
+      names <- c(0)
+      for(i in seq(1, 50)){
+        # run LOOCV each time 50 times and see what the average accuracy is. 
+        
+        train_temp <- sub[folds$subsets[folds$which != i], ] #Set the training set
+
+        test_temp <- sub[folds$subsets[folds$which == i], ] 
+
+        temp_fit <- svm(label2 ~., data = train_temp, kernel = "linear",
+                      cost = 1)
+        test_grid_temp <- predict(temp_fit, newdata = test_temp)
+
+        mat <- confusionMatrix(test_grid_temp, test_temp$label2)
+        if(mat$overall[1] != 1){
+          print(i)
+          names <- append(names, big_boy[i,1])
+        }
+        results<-append(results, mat$overall[1])
+      }
+      ```
+
+  * graphing?
+    * created plots using ggplot2 and matplotlib
+    ```python
+    for i,x in enumerate(container):
+        row = np.array(x)
+        row = row.astype(float)
+        y = np.arange(1, len(row)+1, 1)
+        plt.figure(figsize=(9,9))
+
+        plt.plot(y, row)
+        plt.title(titles[i])
+
+        plt.savefig(titles[i] + '_MATTR.png', dpi=500)
+        plt.gcf().clear()
+        plt.show()
+    ```
+
+* Research
+  * logistic
+    * predicting case outcomes?
+    * realized that this wasn't quite the level of analysis we wanted to work on
+  * name entity recognition
+    * try to distinguish which parties were being references in cases
+  * topic modeling
+    * mallet
+  * metadata work
+    * figuring out questions like, given a date, return who was on the court / who was chief justice
+* GPT-2 (SBOTUS)
+  * interested in using court corpus to make a "bot" for each justice
+  * did not have enough data to do this reliably, though, so just made one "composite" justice model
+  * added extra data by using the Oyez API 
+    * for each case, pull in the oral arguments for each participating justice
+    * this left me with a huge amount of data for each justice - all their sentences
+  * [todo]
+* Twitter BOT [todo]
+* NLP project
+  * [how is it going] [todo]
+* Classes?
+  * applied NLP
+  * next semester, hopefully TA
