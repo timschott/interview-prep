@@ -59,6 +59,13 @@
     * more training data
     * more complex model
     * ensemble learning
+  * as you increase training data, what happens to training error?
+    * increases
+  * as you increase training data, what should happen to test error?
+    * it should decrease because we can create a model that better resembles true behavior in general senses
+  * when is overfitting likely?
+    * small amount of data and a large hypothesis space
+  * 
 
 ### Regularization
 
@@ -70,6 +77,7 @@
       * because of this, it can completely remove a coefficient by setting its value to zero
     * L2 = Ridge Regression
       * adds a squared magnitude of penalty
+      * increases bias and reduces variance
   * when to use?
     * regularization prevents a single feature from being too large during model training. it can be used when you need to prevent overfitting and want your model to generalize better.
     * we would use L1 LASSO during feature selection because it can completely drop unneeded coefficients
@@ -95,7 +103,8 @@
 #### Error and Error Measures
 
 * where does error come from?
-  * [todo]
+  * measurement
+  * random error
 * What is SE?
   * standard error = variation of sample statistics
   * formula: `SE = s / sqrt(n)`
@@ -115,43 +124,93 @@
   * sum of squares regression
   * the sum of the squared differences between the predicted data points (`ŷi`) and the mean of the response var (`ȳ`)
   * `SSR = Σ(ŷi – ȳ)^2`
-  * 
+  * the amount of variance explained by the model
+
 ## Machine Learning
 
 * explain the difference between supervised and unsupervised learning
   * supervised learning separates data into pre-determined human defined categories based on labels
-  * unsupervised learning separates data without the use of labels.
+    * learn from past data in order to explain/predict new data samples
+    * example: separate "fake news" from NYTimes articles
+  * unsupervised learning organizes data without the use of labels.
+    * example: cluster newspaper articles from the 19th century
 
-### Models [todo]
+### Models
 
-* models to know...
-  * k means
-  * svm
-  * decision tree
-  * random forest
-  * hierarchical clustering
-  * logistic
-  * linear
-    * what assumptions do you make when using linear models?
-    * what features?
-    * what is homoskedasticity
-  * what is ANOVA [tod[]]
+#### K Means
+
+* unsupervised clustering algorithm
+* general alg:
+  * to start: randomly initialize k-centroids
+
+#### SVM 
+
+#### Decision Tree/Random Forest
+
+* decision tree
+* random forest
+
+#### Linear
+
+* linear
+  * the goal of linear regression is to fit a linear model to predict unseen data points
+    * predict y as a function of a linear model
+    * `yˆ= f(x) = θ0 +θ1x + ....`
+  * example: predict the price of a house based on its zillow description
+    * input: zillow description
+    * output: house price in $
+    * note that what we are predicting here is *continuous*
+  * task: how do we come up with our coefficients to an extended form of y = mx + b?
+    * you can find a "closed form" solution by taking the gradient of the normal equation and solving
+      * in some cases we just can't if matrix is not invertible
+    * you can optimize a cost function, which is just something like mean squared error, via gradient descent
+      * with LR, the cost function has only one single global minimum, so this is a good choice
+  * what assumptions do you make when using linear models?
+    * that our data is linearly separable
+    * that our residuals share a fairly constant variance (homoscedasticity)
+    * that our data are independent
+    * that for a fixed value of X, Y is normally distributed
+  * what is homoscedasticity
+    * the variance of residuals is constant throughout a model
+  * what are some considerations about what features to hand off to a linear model
+    * two columns should not be highly linearly related
+  * what is ANOVA
     * analysis of variance
-    * what are the measures it produces
-  * knn
-  * topic modeling
-  * naive bayes
-  * neural network
-    * simple
-    * fully-connected
-    * CNN
-    * LSTM
+    * for analyzing diff bt means (not applicable for certain tasks)
+
+#### Logistic
+
+#### KNN
+
+#### Topic Modeling
+
+#### Naive Bayes
+
+#### Neural Networks
+
+* neural network
+  * simple
+  * fully-connected
+  * CNN
+  * LSTM
 
 ### Strategies and Discussion
 
 * very high level: describe the steps of a learning pipeline
-  * [todo]
+  * task
+    * define the task of your learning problem
+  * data representation
+    * pre-processing
+    * feature extraction
+    * label collection
+    * operationalize / condense your area of interest into a large data set
+  * scoring function
+    * use a function that can accurately record your progress at the task
+  * optimization and fine-tuning
+  * evaluate model on unseen data
+* what is gradient descent?
 * what is ensemble learning?
+* what is a bias term?
   * combining different models in order to produce more robust outcomes
   * bagging
     * bootstrap and build multiple classifiers, one for each sample, then combine classifiers
@@ -162,10 +221,22 @@
 * diff bt parametric and non parametric model? [todo]
   * parametric example 
   * non parametric example
-* explain cross validation [todo]
+* explain cross validation:
+  * break your data into subsets, train on every piece of each subset but one member which you use as the test data, then cycle through all the subsets
+  * benefits: lets us train on *all* of our data instead of just getting rid of 20% of it (with a simple train-test split)
+  * also provides more performance information instead of a single metric for accuracy
   * leave one out
+    * k-fold where k = dataset-size - 1
   * k-fold
-* explain grid search [todo]
+    * split data into K "folds" of equal size
+    * ie: 
+      * divide data into 10 equal pieces
+      * 9 pieces are training, 1 is test set
+      * iterate over every combo and collect the scores
+      * average them to see how you do
+* explain grid search:
+  * grid search is a method for hyper parameter optimization where you input a group of potential hyperparameters and test each version of your model
+    * ie, find the best performing cost function for an SVM or learning rate for NN
 * what is the curse of dimensionality?
   * bigger dims, data becomes sparse
   * and # of model configurations grows exponentially
@@ -219,6 +290,66 @@
     * P(A or B) = P(A) + P(B)
     * P(A and B) = 0
     * for example, team A wins and team B wins
+    * also referred to as disjoint
+
+## Linear
+
+* operations:
+  * tranpose: flip rows and columns
+  * multiply matrices: every row by every column when inner dims of A and B match
+  * (2x3) x (3x2) => 2x2 matrix
+  * addition/subtraction: element wise, dimensions must match
+* dot product: multiply everything element-wise
+  * produces a scalar
+  * also known as "inner product"
+  * `a = [1,2,3], b = [4,5,6], a ● b = 1*4 + 2*5 + 3*6 = 28`
+* `y = Ax` => `yT = xTA `
+  * `yT` is a linear combination of the rows of `A`
+* magnitude: square root of the sum of its squares
+  * ie `sqrt(a1^2 + a2^2 + ... an^2)`
+  * mag of a is |a|
+  * this means that `a / |a|` gives us a "unit vector" (of length 1)
+  * this is the L2 Norm
+  * (where the L1 norm is the "manhattan" distance (sum of its absolute values))
+* orthogonal, when `x ● y = 0`
+* matrix is orthogonal if its inverse = its transpose
+  * best case ....
+* an inverse matrix is analogous to a reciprocal in scalar-world
+  * A x A^-1 = I = A ^-1 * A
+  * much like 6 * 6^-1 = 1
+  * recall the identity matrix I is 1's down the diagonal
+  * a matrix that has a valid inverse is called *nonsingular*
+* when is a matrix invertible (ie nonsingular)?
+  * when it is square and:
+  * when determinant of A is not 0!
+  * det of 2x2 is a11a22 - a21a12 and it gets fuzzier from ther
+    * remember the checkerboard thing + flipping signs
+* what is linear independence:
+  * when a set of vectors cannot be written as a linear combination of one another
+  * the only solution to setting them up as a system Ax = y is 0.
+  * every column in a matrixA  has to be linearly independent if A is invertible.
+
+## Helpful Calculus
+
+* derivative: `f'(x)` = slope of the curve f(x) 
+  * typically at point x
+  * *rate of change*
+* chain rule:
+  * `h(x) = f(g(x))` => `h'(x) = f'(g(x)) * g'(x)`
+* multiplication:
+  * `h(x) = f(x)g(x)` => `h'(x) = f'(x)g(x) + f(x)g'(x)`
+* division:
+  * `h(x) = f(x) / g(x)` => `h'(x) = [f'(x)g(x) - f(x)g'(x)] / (g(x)^2)`
+* eulers:
+  * `h(x) = e^x` => `h'(x) = e^x`
+* log:
+  * `h(x) = log(x)` => `h'(x) = 1/x`
+* a gradient simply provides partial derivatives for particular spots in a matrix
+  * let `f(x, z)`
+  * `g` = `∇f` =  `{∂f/∂x, ∂f/∂z}`
+* integral: `∫f(x)` = area under a curve f(x) 
+  * typically (from a to b)
+  * *amount of accumulation*
 
 ## Statistics
 
@@ -235,8 +366,7 @@
   * iteratively resampling your dataset in order to estimate population metrics
   * when to use it?
     * very useful when you have a constrained/limited sized dataset but still want to carry out advanced analysis
-
-
+    * 
 ### Hypothesis Testing
 
 #### Procedure
