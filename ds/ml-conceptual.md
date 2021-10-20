@@ -143,7 +143,24 @@
 * general alg:
   * to start: randomly initialize k-centroids
 
-#### SVM 
+#### SVM: Support Vector Machine
+
+* "maximum margin classifier"
+* supervised
+* the goal is to classify all points correctly
+* a "support vector" is a data point touching the margin
+* optimize by learning a boundary that leads to the largest margin between both sets of data and correctly classifies all points
+* cost parameter c:
+  * the larger the value, the more heavily we penalize wrong answers
+  * this makes the margin between groups smaller
+* we can also abstract this to higher dimensional (non-linear) spaces
+* pro: 
+  * creates clear margin of high separation
+* con: 
+  * breaks down with large or noisy data sets
+  * not great with more than 2 classes
+  * prone to overfitting
+  * does not provide probability estimates (unlike logistic)
 
 #### Decision Tree/Random Forest
 
@@ -181,6 +198,19 @@
 #### Logistic
 
 #### KNN
+
+* supervised, because we know our gold standard
+* non parametric method
+  * can be used for either classification or regression
+* with: labeled training samples, distance metric, k
+* the larger the k, the lower the variance and the more smooth the boundaries are
+* in practice, a tiny k like 1 is very susceptible to outliers
+  * 1 green dot in a sea of red dots, could lead to issues
+* pro:
+  * easy to implement
+  * no model
+* con:
+  * slow
 
 #### Topic Modeling
 
