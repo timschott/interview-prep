@@ -96,7 +96,7 @@
   * difference between a predicted value and a true value
 * What is RMSE / RMSD?
   * root mean square error / root mean square deviation
-  * standard deviation of the sum of prediction errors
+  * square root of the sum of prediction errors
   * `√(Σ(ŷi – yi)^2)) / n)`
   * on the same scale as output 
 
@@ -165,8 +165,36 @@
 #### Decision Tree/Random Forest
 
 * decision tree
+  * a decision tree classifies data based on a series of one-variable decisions
+  * can be used for regression or classification
+  * each node is a "test"
+
+![decision-trees](decision-trees.png)
+
+  * the decision outcomes are found at the leaves
+  * represents a *disjunction of conjunctions*
+  * think of it like a big `CASE` statement
+
+```
+CASE WHEN Overlook == 'overcast' THEN tennis
+CASE WHEN Outlook == 'rain' and Windy == False THEN tennis
+CASE WHEN Outlook == 'sunny' and Humidity == 'normal' THEN TENNIS
+END AS tennis_decision
+```
+  * how do we fill up the tree? what goes where?
+  * alg: at each level, we want to maximize the amount of division in our data
+  * ie, it's better when 8 samples go left and 8 samples go right then only 2 samples go left and 14 go right
+  * one criteria: for each available var, which maximizes "information gain" and minimizes "entropy"
+  * information gain = we want to increase our certainty at each step
+  * entropy = a measure of uncertainty for a data set
+* decision trees are prone to over fitting because you can perfectly fit a tree for any data set
+  * would just be a little weird looking..
+  * relatedly, they have high variance
 * random forest
-* [todo]
+  * ensemble learning technique
+  * uses de-correlated trees by randomly considering which features to split with. by reducing the number of features we can split with, we reduce variance
+  * relies on bootstrapping
+  * high powered version is XGboost
 
 #### Linear
 
@@ -222,7 +250,18 @@
 
 #### Topic Modeling
 
-* [todo]
+* creates a set of probability dists over the vocab which, combined in different proportions, matches the content of the collection
+* topic models are useful because they are easily interpretable, lend themselves well to visualizing
+* A document typically concerns multiple topics in different proportions
+  * in a document that is 10% about cats and 90% about dogs, there would probably be about 9 times more dog words than cat words.
+* also, as an unsupervised method, can shed light on parts of our corpus we may have neglected
+* like anything else, your results depend on your entire learning pipeline:
+  * Mimno, 2016 - don't stem before topic modeling
+* example of topic modeling:
+  * Lucy et al 2020 textbook analysis (content of history textbooks in texas public schools)
+* in software, MALLET 
+  * which behind the scenes is using LDA
+* setup, create a term document matrix, then probably would want tf-idf, then hand that off to model
 
 #### Naive Bayes
 
@@ -565,13 +604,34 @@ return bool(p_val, sig)
 
 ## NLP
 
+* type
+  * a unique a word in a vocabulary
+* token
+  * an instance of a word in a vocabulary
+* type token ratio for "The big dog is red and the small dog is blue"
+  * types: 8
+  * tokens: 11
+  * ttr - 8/11
 * what is stemming?
-  * [todo]
+  * stemming removes the ends of words with the goal of reducing inflectional diversity
+  * porter stemmer, most common
+    * turns `operate operating operates operation operative operatives operational` into `oper`
+    * but then we lose the concept of an "operating system"
+  * increases recall, reduces precision
 * what is lemmatization?
-  * [todo]
+  * lemmatization has a similar goal, but uses a morphological analysis to inform its decision making with the goal of returning the "dictionary" form of a word
+    * `seeing seen sees` -> `see`
 * what is name entity recognition?
   * [todo]
 * what is coreference resolution?
+  * [todo]
+* what is tf-idf
+  * term frequency inverse document frequency
+  * a measure of lexical richness that can be used to see what words are the most characteristic of a particular document in a corpus
+  * 
+* what is dependency parsing?
+  * [todo]
+* what is a language model?
   * [todo]
 * in today's world, what is the most robust way to do sentiment analysis?
 * when would you want to keep stop words?
@@ -602,12 +662,25 @@ return bool(p_val, sig)
       * matrix decomposition
       * removing unneeded columns
       * [todo]
-* compare an contrast BERT and GPT-3
-  * [todo]
+    * one hot encoding
+      * [todo]
+* compare and contrast BERT and GPT-3
+  * BERT is bidirectional, GPT is left to right
+  * BERT uses word piece tokenization, GPT uses byte pair encoding
+  * GPT has far more parameters than BERT
+  * GPT-3 was trained on common crawl, web text, *some* book corpus, a little reddit
+  * BERT was trained on bookcorpus + wikipedia
+  * GPT-3 is very ease to use with zero/few shot learning for all downstream tasks
+  * BERT requires separate data / stage for fine-tuning for tasks like machine translation, part of speech tagging
+  * BERT trains with masked language modeling and next sentence prediction
+  * GPT-3 trains with an encoder/decoder model, next word prediction
+    * directly compute P(w | its preceding words)
+  * BERT is open sourced, GPT3 still under wraps
+  * GPT-3 is especially good at text generation
 * explain how a transformer works
   * [todo]
 * you just created an NLP model. what are some ways you can see how well it performs?
-  * mixture of standard error / recall measures (accuracy, F1, ROC) and task specific like the stanford question and answer data set (SQuAD)
+  * mixture of standard error / recall measures (accuracy, F1, ROC) and task specific like the stanford question and answer data set (SQuAD) and general language understanding eval (GLUE)
   * you should also try to look at how efficient it is 
     * - how many parameters have you added versus baseline? 
     * is there a significant gain for x amt of increase in training time / corpus size?
@@ -646,6 +719,7 @@ return bool(p_val, sig)
   * Decision Trees
     * used random forests for feature selection via the variable importance metric
     * a random forest was used because ensemble learning is an effective way to combine the output of many decision trees
+      * random forest uses decorrelated trees to expose clearer insights in our data
       * prevents overfitting
       ```R
           m <- randomForest(new_df[,-31], new_df$label2, 
@@ -653,7 +727,8 @@ return bool(p_val, sig)
                         mtry = sqrt(30), importance = TRUE)
       ```
   * SVM
-    * used SVM because I had just learned that in class and wanted a binary separation of my data
+    * used SVM with the most important features from random forest ...
+    * had just learned that in class, wanted a binary separation of my data
       * used LOOCV since I had a pretty small data set
       ```R
       folds <- cvFolds(NROW(sub), K=50)
