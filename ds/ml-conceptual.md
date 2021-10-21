@@ -166,6 +166,7 @@
 
 * decision tree
 * random forest
+* [todo]
 
 #### Linear
 
@@ -197,6 +198,8 @@
 
 #### Logistic
 
+* [todo]
+
 #### KNN
 
 * supervised, because we know our gold standard
@@ -206,17 +209,28 @@
 * the larger the k, the lower the variance and the more smooth the boundaries are
 * in practice, a tiny k like 1 is very susceptible to outliers
   * 1 green dot in a sea of red dots, could lead to issues
+* 1 - pick a k
+* 2 - calculate distance to k nearest neighbors
+* 3 - grab the votes for each label in the set k
+* 4 - assign to whichever vote wins
 * pro:
   * easy to implement
   * no model
 * con:
   * slow
+    * sooo many comparisons for a large data set and k
 
 #### Topic Modeling
 
+* [todo]
+
 #### Naive Bayes
 
+* [todo]
+
 #### Neural Networks
+
+* [todo]
 
 * neural network
   * simple
@@ -240,7 +254,6 @@
   * evaluate model on unseen data
 * what is gradient descent?
 * what is ensemble learning?
-* what is a bias term?
   * combining different models in order to produce more robust outcomes
   * bagging
     * bootstrap and build multiple classifiers, one for each sample, then combine classifiers
@@ -248,9 +261,15 @@
     * "sequential learning"
     * XGBoost
     * ADAboost
-* diff bt parametric and non parametric model? [todo]
+* what is a bias term?
+* diff bt parametric and non parametric model?
+  * a parametric model relies on underlying assumptions that a set of parameters can capture everything there is to know about the data
+  * non parametric models do not rely on this assumption
   * parametric example 
+    * linear regression
+    * LDA topic model
   * non parametric example
+    * KNN
 * explain cross validation:
   * break your data into subsets, train on every piece of each subset but one member which you use as the test data, then cycle through all the subsets
   * benefits: lets us train on *all* of our data instead of just getting rid of 20% of it (with a simple train-test split)
@@ -276,9 +295,6 @@
 * when to use classification vs regression?
   * classification separates data into camps of categorical labels
   * regression classifies based on a numerical attribute
-* what is a (non linear) activation function
-  * a non linear activation function transforms inputs to a non linear space which allows a neural network to patterns from a non linear version of the input
-  * this allows it to make sophisticated decisions across boundary lines that aren't constrained by linearity
 * diff bt linear and logistic?
   * linear regression is used to separate data into classes on a continuous scale
     * uses a linear function, generalized form of w = xt + b, produces a real number value
@@ -307,6 +323,9 @@
 * what is convolution?
 * what is dropout?
 * what is "fully connected"?
+* what is a (non linear) activation function
+  * a non linear activation function transforms inputs to a non linear space which allows a neural network to patterns from a non linear version of the input
+  * this allows it to make sophisticated decisions across boundary lines that aren't constrained by linearity
 
 ## Probability
 
@@ -321,6 +340,14 @@
     * P(A and B) = 0
     * for example, team A wins and team B wins
     * also referred to as disjoint
+* definition of expected value:
+* how to get probability w/ Binomial Distribution
+* license plate problem
+  * 3 letters, 4 numbers = 26^3 * 10^4
+* loose def of probability: long term expected chance of an event
+  * number of ways it can happen / total events in sample space
+* roll 3 die, probability all 3 dice have different top numbers
+  * (6 * 5 * 4) / 6^3
 
 ## Linear
 
@@ -389,27 +416,64 @@
   * if you draw large, random samples from a populations, the means of those samples will be distributed normally around the population mean
   * you can game this out by noting the variance of the sample mean drops to 0 as the number of samples becomes very large
   * for example, 1000 fair coin flips can be modeled by a normal dist N~(500, 250)
-* what is the law of large numbers? [todo]
-  * sample gets better as sample size increases
+* what is the law of large numbers?
+  * sample mean gets closer to the expected value as sample size increases
+  * ie, as we flip a coin, more and more, the observed p(heads) will get closer to p(tails)
+  * and approach true val of p(heads) = p(tails)
 * why do we sample?
 * what is bootstrapping?
   * iteratively resampling your dataset in order to estimate population metrics
   * when to use it?
     * very useful when you have a constrained/limited sized dataset but still want to carry out advanced analysis
-    * 
+
 ### Hypothesis Testing
 
 #### Procedure
 
-* explain a hypothesis test
-  * test rundown
-  * when to use a binomial test
-    * when we have very few samples of a Bernoulli trial
-      * / proportions
-  * when to use a z-test
-    * used when we know the population variance, and sample size is >= 30 (CLT)
-  * when to use a t-test
-    * used when we do not know the population variance, and sample size is >= 30 (CLT), and our samples are normally distributed
+* give me the steps for doing a hypothesis test:
+
+* 1. state the hypothesis
+  * begin by stating a null hypothesis, which you presume is true
+    * just like "innocent until proven guilty"
+  * next, come up with an alternative hypothesis
+    * can be two tailed - bidirectional !=
+    * or > / <
+* 2. set a level of significance for the test
+  * this is the criteria for our decision
+  * in words: when the probability of obtaining a sample mean as what we have observed is less than alpha percent if the null were true, we reject the null hypothesis
+  * why? it is likely that sample means that fall in the extreme parts of the tails occur for a population mean when the null hypothesis is false
+* 3. compute the **test statistic**
+  * tells us how many standard deviations a sample mean is from the population mean
+  * the larger the value of the test statistic, the further the distance a sample mean is from the population mean stated in the null hypothesis
+* 4. make a decision
+  * compute a **p value**
+    * the probability of obtaining a sample mean given the value stated in the null hypothesis is TRUE
+      * note that for a 2 tailed test, p is found w/: `2 * (1 - Φ(test_statistic))`
+    * between 0 and 1, never negative
+    * reject when the CALCULATED p < alpha
+    * *the base p value IS = to alpha*
+    * so in code it's like
+    * `my_p_val < sig_level` 
+      * (two tailed --> sig_level / 2)
+* python code:
+
+```python
+t_statistic = abs(avg_diff / standard_error)
+# in this case, break in two (ie go from 97.5 -> 100)
+t_at_sig = stats.t.ppf(1 - (alpha/2), sample_size)
+dof = sample_size - 1
+# in this case, double it because two tailed test
+p_val = 2 * (1 - stats.t.cdf(t_statistic, df))
+return bool(p_val, sig)
+```
+
+* when to use a binomial test
+  * when we have very few samples of a Bernoulli trial
+    * / proportions
+* when to use a z-test
+  * used when we know the population variance, and sample size is >= 30 (CLT)
+* when to use a t-test
+  * used when we do not know the population variance, and sample size is >= 30 (CLT), and our samples are normally distributed
 * compare t-distribution to normal-distribution
   * t-dist is more spread out
   * used we don't know standard dev
@@ -438,10 +502,10 @@
   * two sample t test:
     * `t = (𝑋1 - X2) / [standard error]`
 * how to determine significance?
-  * is the retrieved test statistic larger (/smaller) than the critical value
+  * is the calculated p value smaller than the significance level
   * if so, reject null hypothesis
-* how to calculate interval of acceptance from sig level
-  * [todo]
+* how to calculate area of acceptance from sig level
+  * the area of acceptance is just everything to the left of the critical value
 
 #### Hypothesis Testing Conceptual
 
@@ -469,17 +533,20 @@
   * the significance level represents the probability of rejecting the null hypothesis when it is true
 * what is a confidence interval?
   * gives us a measure of how confident we are that the statistic of interest falls in that interval 
-  * x% of confidence intervals we generate will capture the parameter
+  * x% of confidence intervals we generate will capture the true value of the population mean
   * we are x% confident in the process used to generate our interval
+  * the true population mean lies within the computed interval 95% of the time ("in the long run"). 
   * how to calculate?
   * (sample mean) +/- margin of error
 * what is margin of error?
-  * critical val * standard deviation/standard error
+  * critical val * standard deviation/error
     * where critical value is z-score at sig level!
+      * ie, the z score corresponding to a "p val" of .05
     * standard dev or standard error depending on what you are working with
 * what is a p value?
-  * the probability of obtaining test results at least as extreme as what was observed
-  * "probability this difference occurred by random chance"
+  * the probability of obtaining the observed sample mean given the value stated in the null hypothesis is TRUE. 
+  * The probability that, *in the long run*, the null hypothesis remains accurate (which will never be 0 just because of how things work out). 
+  * When it is sufficiently small - less than alpha -- we *reject* the null and adopt the alternative explanation.
   * the amount of area not covered by the accumulation of the dist wrt the retrieved test statistic
 * what is A/B testing
   * A/B testing is just another way of setting up a hypothesis test.
@@ -491,6 +558,10 @@
 * what are degrees of freedom
   * number of independent pieces of info
   * typically, N-1
+* 68–95–99.7 rule:
+  * 68% of vals are within 1 SD of the mean
+  * 95% of vals are within 2 SD of the mean
+  * 99.7% of vals are within 3 SD of the mean
 
 ## NLP
 
