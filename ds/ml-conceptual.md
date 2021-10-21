@@ -65,7 +65,6 @@
     * it should decrease because we can create a model that better resembles true behavior in general senses
   * when is overfitting likely?
     * small amount of data and a large hypothesis space
-  * 
 
 ### Regularization
 
@@ -140,8 +139,20 @@
 #### K Means
 
 * unsupervised clustering algorithm
+* partitional
+* globally optimal
+  * exhaustively enumerates all partitions
 * general alg:
-  * to start: randomly initialize k-centroids
+  * pick a k
+  * randomly initialize k-centroids
+  * decide the class membership of the objects by assigning them to the nearest cluster centroid
+    * with whatever distance / similarity metric you are using
+  * re-estimate the *k* cluster centers
+  * continue until none of the N objects switch classes between iterations
+* how to pick the right K?
+  * elbow finding: run with K = [1 - n]
+  * and then pick the one where an "elbow" occurs and error breaks off
+* objective function is intra-cluster variance
 
 #### SVM: Support Vector Machine
 
@@ -357,6 +368,11 @@ END AS tennis_decision
   * most general term for the function you optimize in training
   * MLE 
   * Negative Log Likelihood 
+* what is clustering
+  * grouping a set of objects into similar classes
+  * common form of unsupervised learning
+  * "identify similar gene strands"
+  * "identify similar logos at the grocery store"
 * what is back propagation?
 * what is pooling?
 * what is convolution?
