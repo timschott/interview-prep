@@ -6,18 +6,25 @@
 
 * permutation
   * how many ways to award 1st 2nd and 3rd place to a group of 3 people
+  * how many license plates can be made w/ 3 letters and 4 digits
 * combination
+  * how many ways to pick a 5 person basketball team from a 12 person gym class
 * poisson
 * bayes theorem
-  * >Facebook has a content team that labels pieces of content on the platform as spam or not spam. 90% of them are diligent raters and will label 20% of the content as spam and 80% as non-spam. The remaining 10% are non-diligent raters and will label 0% of the content as spam and 100% as non-spam. Assume the pieces of content are labeled independently from one another, for every rater. Given that a rater has labeled 4 pieces of content as good, what is the probability that they are a diligent rater?
+  * Facebook has a content team that labels pieces of content on the platform as spam or not spam. 90% of them are diligent raters and will label 20% of the content as spam and 80% as non-spam. The remaining 10% are non-diligent raters and will label 0% of the content as spam and 100% as non-spam. Assume the pieces of content are labeled independently from one another, for every rater. Given that a rater has labeled 4 pieces of content as good, what is the probability that they are a diligent rater?
 * coin flip
-  * (p value, is it fair)
+  * simulate fair coin with biased coin
+  * simulate biased coin with fair coin
+  * what makes a fair coin fair?
+    * p(𝐻) = p(𝑇)
 * binomial
-  * >Probability a series goes into 7 games?
+  * Probability a series goes into 7 games?
 * probability formulas
   * single, joint, conditional
 * probability tree
-  * >What is the probability that 𝐻𝐻 occurs before 𝑇𝐻 in an infinite sequence of coin flips?
+  * What is the probability that 𝐻𝐻 occurs before 𝑇𝐻 in an infinite sequence of coin flips?
+* dice
+  * 
 
 ### Code
 
