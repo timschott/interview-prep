@@ -97,6 +97,23 @@
 * what is specificity?
   * true negatives / true negative + false positives
   * true negative rate
+* why are these measures more rich than accuracy?
+  * don't depend on class distribution
+  * so its helpful for evaluating classifiers for rare events like cancer diagnosis
+
+in sk learn:
+
+```python
+# Compute ROC curve and ROC area for each class
+fpr = dict()
+tpr = dict()
+roc_auc = dict()
+for i in range(n_classes):
+    # where roc_curve and auc are wrapper methods to pull in appropriate data
+    fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
+    roc_auc[i] = auc(fpr[i], tpr[i])
+```
+
 * what is a residual?
   * difference between a predicted value and a true value
 * what is the ROC curve
@@ -242,7 +259,7 @@ END AS tennis_decision
     * that our data is linearly separable
     * that our residuals share a fairly constant variance (homoscedasticity)
     * that our data are independent
-    * that for a fixed value of X, Y is normally distributed
+    * that for a fixed value of X, Y is normally distributed (gaussian)
   * what is homoscedasticity
     * the variance of residuals is constant throughout a model
   * what are some considerations about what features to hand off to a linear model
@@ -251,10 +268,47 @@ END AS tennis_decision
     * analysis of variance
     * for analyzing diff bt means (not applicable for certain tasks)
 * loss function - root mean squared error
+* in R:
+
+```R
+house_lm <- lm(house_price ~ train_station_distance, data = real_estate)
+
+> summary(house_lm)[[4]]
+                           Estimate  Std. Error   t value      Pr(>|t|)
+(Intercept)            464.47495610 6.610944493  70.25849 1.856440e-231
+train_station_distance  -0.02242139 0.001211986 -18.49971  4.639825e-56
+
+ggplot(data = real_estate, aes(x = train_station_distance, y = house_price)) + 
+  geom_point(color = "red") + 
+  geom_smooth(method = 'lm', formula = y(x)) +
+  ggtitle("Train Station Distance and Housing Prices - linear fit") +
+  xlab("Distance (ft)") + ylab("Price (USD per square foot)")
+
+# superior to linear model!
+house_log_model <- lm(house_price ~ log(train_station_distance), data=real_estate)
+
+# confirm homoscedasticity - we want constant variance of residuals
+plot(house_log_model$residuals)
+# confirm normality of residuals
+plot(density(house_log_model$residuals))
+sd(house_lm$residuals)
+```
 
 #### Logistic
 
-* [todo]
+* carry out a n-class problem (could be binary, could be multi class)
+* learning task: learn coefficients for p = Sb (β0 +β1x1 + ....)
+  * the betas - how important each feature is to our coefficients
+  * how much predictive power they have
+  * once we come up with their values, use the Sigmoid function to transform them into a distribution with values from 0 to 1.
+* what is the logistic function?
+  * 1 / (1 + e^-t)
+* key point: logistic predicts the *probability* of outcomes, not the outcomes themselves
+* also, the underlying distribution is not not normal - in this case its Bernoulli when it's a 2-label task
+* math: the "odds" for an input are e raised to the weighted equation
+  * `exp(coef(my_log_model))`
+* R code for logistic regression:
+* `logistic_model <- glm(counts ~ outcome + treatment, family = "binomial")`
 
 #### KNN
 
@@ -295,7 +349,7 @@ END AS tennis_decision
 
 #### Naive Bayes
 
-* [todo]
+* 
 
 #### Neural Networks
 
@@ -893,25 +947,41 @@ return bool(p_val, sig)
   * logistic
     * predicting case outcomes?
     * realized that this wasn't quite the level of analysis we wanted to work on
-  * name entity recognition
+  * named entity recognition
     * try to distinguish which parties were being references in cases
+    * was my first attempt at using spacy
   * topic modeling
     * mallet
+    * this was a very cool introduction to NLP - first thing I helped work on
+    * my job was to produce mallet runs for our corpus and carry out interpretation
+    * we also used d3 to create a very cool topic visualization - linking cases that share topics and making the links more defined when their shared prob was higher
   * metadata work
     * figuring out questions like, given a date, return who was on the court / who was chief justice
+  * overall, i really liked the problems the team got to work on
+  * but, i think in this sort of academic setting, the project planning aspect does not get as much attention as it should
+    * as boring as it is in the real world, i think that we would have benefitted from some more "structural" meetings instead of just doing weekly check ins 
 * GPT-2 (SBOTUS)
   * interested in using court corpus to make a "bot" for each justice
   * did not have enough data to do this reliably, though, so just made one "composite" justice model
   * added extra data by using the Oyez API 
     * for each case, pull in the oral arguments for each participating justice
     * this left me with a huge amount of data for each justice - all their sentences
-  * [todo]
-* Twitter BOT [todo]
+  * for gpt-2 itself, for the repo and fixed the tensor flow version (was not compiling)
+  * and then wrote a google collab notebook to fine tune the model with my data
+  * the generated aphorisms were ok, but i think it just needed a lot more of my specific data
+  * it might be interesting to repeat it w/ zero shot gpt3
+* Twitter BOT
 * NLP project
-  * [how is it going] [todo]
+  * i've become very interested with the way that different authors use details
+  * there have been some cool papers recently that use neural networks to classify text passages based on how important they are for the plot
+  * i sort of want to do the opposite
+  * right now, i'm actually hand annotating a large set of passages on my own and then i'm going to look for commonalities in the data/tags
+  * from there, i hopefully can adopt a cool classification method
+  * i would love to get an interpretability method like LIME going to this end
 * Classes?
-  * applied NLP
-  * next semester, hopefully TA
+  * applied NLP, favorite class right now
+  * also taking a stats course - half experimental design, half stats
+  * next semester, hopefully TA, as well as explore a CS dept course like intro to AI
 
 ## Current, Interesting Papers
 

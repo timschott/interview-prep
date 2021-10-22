@@ -378,5 +378,61 @@ ggplot(data = airquality, aes(x=Temp, y=Ozone)) +
 test <- "123456tim"
 test<-gsub("[0-9]", "", test) #test is now just "tim"
 
+### regression practice
+### real estate data from Taiwan
+# Y= house price of unit area 
+# (10000 New Taiwan Dollar/Ping, where Ping is a local unit, 1 Ping = 3.3 meter squared)
+real_estate <- read.csv("data/Real estate.csv", stringsAsFactors = FALSE)
 
-      
+summary(real_estate)
+
+colnames(real_estate) <- c("id", "transaction_date", "house_age", "train_station_distance", "convenience_stores", "latitude", "longitude", "house_price")
+
+# transaction date is in a weird format - we can recover the year, but that's it
+real_estate <- real_estate %>%
+  mutate(transaction_date = floor(transaction_date))
+# drop unneeded ID
+real_estate <- real_estate[, 2:8]
+
+# lets convert the price to US dollars per footage and the meters (for distance) to feet
+# the current price is in 10000 Taiwan Dollars / Ping
+# where Ping is 3.3 m^2 (= to 3.281^2 = 10.765 square ft)
+# 1 Taiwan dollar is .036 USD
+# therefore the multiplier is:
+# (10000 Taiwan dollar / 3.3 m^2) * (360 USD / 10000 Taiwan Dollar) * (1 m^2 / 10.765 ft^2)
+# = to 360 Dollars / 35.52 ft^2 = 10.13 USD per square foot
+real_estate <- real_estate %>% 
+  mutate(train_station_distance = 3.281 * train_station_distance) %>%
+  mutate(house_price = 10.13 * house_price)
+
+# quick plot
+library(ggplot2)
+
+# make convenience stores and year a factor
+real_estate <- real_estate %>%
+  mutate(convenience_stores = as.factor(convenience_stores)) %>%
+  mutate(transaction_date = as.factor(transaction_date))
+
+# box plot - convenience stores and house price
+ggplot(data = real_estate, aes(x=convenience_stores, y = house_price)) + geom_boxplot(outlier.colour = "RED")
+
+# build linear model - 
+house_lm <- lm(house_price ~ train_station_distance, data = real_estate)
+
+# house price vs train station distance
+# a log separation fits the data much better than a linear curve
+ggplot(data = real_estate, aes(x = train_station_distance, y = house_price)) + 
+  geom_point(color = "red") + 
+  geom_smooth(method = 'lm', formula = y~log(x)) +
+  ggtitle("Train Station Distance and Housing Prices - log fit") +
+  xlab("Distance (ft)") + ylab("Price (USD per square foot)")
+
+# superior to linear model!
+house_log_model <- lm(house_price ~ log(train_station_distance), data=real_estate)
+
+# confirm homoscedasticity - constant variance of residuals
+plot(house_log_model$residuals)
+# confirm normality of residuals
+plot(density(house_log_model$residuals))
+sd(house_lm$residuals)
+
