@@ -260,6 +260,7 @@ END AS tennis_decision
     * that our residuals share a fairly constant variance (homoscedasticity)
     * that our data are independent
     * that for a fixed value of X, Y is normally distributed (gaussian)
+    * residuals should be normally distributed
   * what is homoscedasticity
     * the variance of residuals is constant throughout a model
   * what are some considerations about what features to hand off to a linear model
@@ -319,6 +320,7 @@ sd(house_lm$residuals)
 * the larger the k, the lower the variance and the more smooth the boundaries are
 * in practice, a tiny k like 1 is very susceptible to outliers
   * 1 green dot in a sea of red dots, could lead to issues
+* algorithm:
 * 1 - pick a k
 * 2 - calculate distance to k nearest neighbors
 * 3 - grab the votes for each label in the set k
@@ -378,7 +380,6 @@ p(the pizza rocks)
   * (add 1 to "smooth" to prevent multiplying by 0)
 * for the final check, we just compare the joint product of the positive lookups against the same values for the negative lookups
 
-
 #### Neural Networks
 
 * neural network: a learning model that uses the combination of neural units and activation functions to make non-linear decisions about inputted data
@@ -414,7 +415,7 @@ p(the pizza rocks)
   * maps the value z to a range between 0 and 1
   * the logistic function
 * what is softmax
-  * turns a vector of values into a vector of values that sum to 1. 
+  * turns a vector of values into a vector of values that sum to 1
   * represent a probability dist over a discrete variable with n possible values
 * what is RelU
   * maps the value of z to 0 if its negative, else return z
@@ -526,8 +527,13 @@ p(the pizza rocks)
     * P(A and B) = 0
     * for example, team A wins and team B wins
     * also referred to as disjoint
+* Bayes theorem
+  * P(A|B) = [P(B|A) * P(A)] / P(B)
 * definition of expected value:
 * how to get probability w/ Binomial Distribution
+  * (N choose x)(p)^x (1-p)^ n-x
+  * prob that world series goes to seven games:
+  * 6 Choose 3 * .5^3 * .5^3
 * license plate problem
   * 3 letters, 4 numbers = 26^3 * 10^4
 * loose def of probability: long term expected chance of an event
@@ -737,7 +743,7 @@ return bool(p_val, sig)
     * where critical value is z-score at sig level!
       * ie, the z score corresponding to a "p val" of .05
     * standard dev or standard error depending on what you are working with
-* what is a p value?
+* what is a p-value?
   * the probability of obtaining the observed sample mean given the value stated in the null hypothesis is TRUE. 
   * The probability that, *in the long run*, the null hypothesis remains accurate (which will never be 0 just because of how things work out). 
   * When it is sufficiently small - less than alpha -- we *reject* the null and adopt the alternative explanation.
@@ -778,6 +784,7 @@ return bool(p_val, sig)
   * lemmatization has a similar goal, but uses a morphological analysis to inform its decision making with the goal of returning the "dictionary" form of a word
     * `seeing seen sees` -> `see`
 * what is named entity recognition?
+  * a specific kind of coreference resolution where we resolve the named entities used in a text
   * captures the task of, can we extract *who* a text is talking about
   * different sub tasks, like identifying corefers and anaphors
   * extremely complicated
@@ -792,7 +799,8 @@ return bool(p_val, sig)
     * to answer a question like "branch in pittsburg, pa"
   * question - is the thumbs down granular enough feedback for retraining on a mistake?
 * what is coreference resolution?
-  * [todo]
+  * disambiguation, rather than just entity extraction (what NER provides)
+  * for example, can i figure out what objects or events a text is talking about
 * what is tf-idf
   * term frequency inverse document frequency
   * a measure of lexical richness that can be used to see what words are the most characteristic of a particular document in a corpus
@@ -808,7 +816,6 @@ return bool(p_val, sig)
       * accumulate this as tf-idf w/ : tf * log(df)
     * 4 - assemble these numbers at document D for every word in Vocab
   * once we have these metrics, we can carry out exercises like for example making an embedding for each word by slicing it up and making a vector for each word
-    * you could imagine making a "document" vector as well by computing its mean and comparing it to all the other document vectors
 * what is dependency parsing?
   * modeling the syntactic structure of a sentence by analyzing the grammatical relationships between the words in a sentence
   * for example in `rainy day`, rainy is an adjectival modifier for day
@@ -829,20 +836,24 @@ return bool(p_val, sig)
   * GLoVE combines word2vec and pointwise mutual info
   * cool applications - two words most "similar" when their cosine similarity is very small.
     * `v • w  / (len(v) * len(w))`
+  * you could imagine making a "document" vector computing an average of embeddings
 * what is chi squared
   * tests whether there is a statistically significant difference between observed and expected frequencies
   * for NLP: could use chi squared on tf-idf scores
 * why is BERT so good?
-  * word piece
+  * word piece (plus [CLS] and [SEP])
   * pre-training
   * bidirectional
+    * consider every other token in a sequence to predict word w
   * masking
+    * randomly blank out certain tokens to prevent overfitting and increase understanding
   * next sentence prediction
-  * attention
-    * [todo]
+  * multi-headed attention
+    * split rep into query, kev, and value (with linear transform)
+    * 12 per layer
   * transformers
-    * [todo]
   * fine-tuning
+    * domain specific adaptation w/ your own dataset, objective function and parameter tuning
   * open source
 * why is GPT so good?
   * huge pool of params + data
@@ -877,8 +888,21 @@ return bool(p_val, sig)
   * BERT is open sourced, GPT3 still under wraps
   * BERTology is pretty cool, harder to do w/ GPT3
   * GPT-3 is especially good at text generation
+* what is attention
+  * basic idea, we have word embeddings, and want to come up with a classification result of documents
+  * attention allows us to provide and manipulate *weights* when we carry out calculations with word embeddings
+  * therefore highlighting more discriminatory elements of a document
+  * serves as more parameters for the model!
+  * BERT scales it way, way up
+    * https://nlp.stanford.edu/pubs/clark2019what.pdf
+
+![bert-attention](clark-et-al-2019-attention-mapping.png)
+
 * explain how a transformer works
-  * [todo]
+  * multiple layers + multiple attention heads
+  * easily share information regarding far-away tokens
+    * like an improved sharing scheme (LSTM)
+  * encoder-decoder arc.
 * you just created an NLP model. what are some ways you can see how well it performs?
   * mixture of standard error / recall measures (accuracy, F1, ROC) and task specific like the stanford question and answer data set (SQuAD) and general language understanding eval (GLUE)
   * you should also try to look at how efficient it is 
@@ -999,6 +1023,10 @@ return bool(p_val, sig)
   * the generated aphorisms were ok, but i think it just needed a lot more of my specific data
   * it might be interesting to repeat it w/ zero shot gpt3
 * Twitter BOT
+  * after reading the hard copy of the washington post at my parents house, became fascinated w/ bezos disclosures
+  * use news api to get a link to every article that contains his name
+  * run through the text and search for the disclosure with regex
+  * tweet that out via a google cloud function, run automatically with a cron job
 * NLP project
   * i've become very interested with the way that different authors use details
   * there have been some cool papers recently that use neural networks to classify text passages based on how important they are for the plot
