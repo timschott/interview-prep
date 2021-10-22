@@ -88,17 +88,21 @@
 * what is F1?
   * harmonic mean of precision and recall
 * what is precision?
-  * number of true positives / true positives + false positives
+  * true positives / true positives + false positives
   * (divide by first ROW)
 * what is recall?
-  * number of true positives / true positive + false negative
+  * true positives / true positive + false negative
+  * true positive rate
   * (divide by first COL)
+* what is specificity?
+  * true negatives / true negative + false positives
+  * true negative rate
 * what is a residual?
   * difference between a predicted value and a true value
 * what is the ROC curve
   * receiver operating curve
-  * plot recall on y axis, plot 1 - recall as x axis
-    * note 1 - recall = "false positive rate"
+  * plot recall on y axis, plot 1 - specificity as x axis
+    * note 1 - specificity = "false positive rate"
   * the ROC curve is better the more area that is underneath 
     * ie we want it bending up and to the left
 
@@ -753,7 +757,9 @@ return bool(p_val, sig)
   * masking
   * next sentence prediction
   * attention
+    * [todo]
   * transformers
+    * [todo]
   * fine-tuning
   * open source
 * why is GPT so good?
@@ -766,7 +772,6 @@ return bool(p_val, sig)
       * transform data to a new coordinate system
       * axis 1 = greatest variance (by projection), axis 2 = second greatest, etc.
       * each of these levels is a "principal component"
-      * 
     * LSA
       * matrix decomposition
       * removing unneeded columns
