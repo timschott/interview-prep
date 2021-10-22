@@ -349,7 +349,35 @@ sd(house_lm$residuals)
 
 #### Naive Bayes
 
-* 
+* a generative statistical model
+* can be used for classification
+* why is it naive?
+  * assume word usage is independent
+  * thats how it's able to calculate the joint probabilities as pure multiplication
+* typically, the equation is multinomial:
+  * ie, like flipping a dice - count success for an event with N trials, theta success of each event, k categories
+* `Pr(W1 = n1, W2 = n2... | C = c)`
+* objective function: maximum likelihood estimate
+* steps:
+  * for each word, get its probability val in each class of documents P(word | class1), P(word | class2)...
+  * multiply all vals for each class
+  * compare, which ever is higher is the class that group of words should get put into
+* example - what is probability of positive given the input phrase was "the pizza rocks"
+
+```
+p (positive | the pizza rocks) = 
+p(the pizza rocks | positive) * p(positive) 
+---
+p(the pizza rocks)
+```
+
+* and we calculate p(the pizza rocks | positive) as: 
+* `p(the|positive) * p(pizza|positive) * p(rocks|positive)`
+* which is just a a series of frequency lookups:
+  * p(the|positive) = 1 + the freq in pos texts / number of pos texts
+  * (add 1 to "smooth" to prevent multiplying by 0)
+* for the final check, we just compare the joint product of the positive lookups against the same values for the negative lookups
+
 
 #### Neural Networks
 
