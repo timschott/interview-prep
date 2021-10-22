@@ -89,10 +89,21 @@
   * harmonic mean of precision and recall
 * what is precision?
   * number of true positives / true positives + false positives
+  * (divide by first ROW)
 * what is recall?
   * number of true positives / true positive + false negative
+  * (divide by first COL)
 * what is a residual?
   * difference between a predicted value and a true value
+* what is the ROC curve
+  * receiver operating curve
+  * plot recall on y axis, plot 1 - recall as x axis
+    * note 1 - recall = "false positive rate"
+  * the ROC curve is better the more area that is underneath 
+    * ie we want it bending up and to the left
+
+![roc-curve](Roc_curve.png)
+
 * What is RMSE / RMSD?
   * root mean square error / root mean square deviation
   * square root of the sum of prediction errors
@@ -206,6 +217,7 @@ END AS tennis_decision
   * uses de-correlated trees by randomly considering which features to split with. by reducing the number of features we can split with, we reduce variance
   * relies on bootstrapping
   * high powered version is XGboost
+* "loss functions" in addition to thinking about information gain / entropy, also gini coefficient (which produces a metric for how "pure" the nodes are)
 
 #### Linear
 
@@ -220,7 +232,7 @@ END AS tennis_decision
   * task: how do we come up with our coefficients to an extended form of y = mx + b?
     * you can find a "closed form" solution by taking the gradient of the normal equation and solving
       * in some cases we just can't if matrix is not invertible
-    * you can optimize a cost function, which is just something like mean squared error, via gradient descent
+    * you can optimize a cost function, which is just something like root mean squared error, via gradient descent
       * with LR, the cost function has only one single global minimum, so this is a good choice
   * what assumptions do you make when using linear models?
     * that our data is linearly separable
@@ -234,6 +246,7 @@ END AS tennis_decision
   * what is ANOVA
     * analysis of variance
     * for analyzing diff bt means (not applicable for certain tasks)
+* loss function - root mean squared error
 
 #### Logistic
 
@@ -258,6 +271,7 @@ END AS tennis_decision
 * con:
   * slow
     * sooo many comparisons for a large data set and k
+* no "loss" function since there's no model that we are training
 
 #### Topic Modeling
 
@@ -273,6 +287,7 @@ END AS tennis_decision
 * in software, MALLET 
   * which behind the scenes is using LDA
 * setup, create a term document matrix, then probably would want tf-idf, then hand that off to model
+* objective function: whatever LDA uses
 
 #### Naive Bayes
 
@@ -280,13 +295,45 @@ END AS tennis_decision
 
 #### Neural Networks
 
-* [todo]
-
-* neural network
-  * simple
-  * fully-connected
-  * CNN
-  * LSTM
+* neural network: a learning model that uses the combination of neural units and activation functions to make non-linear decisions about inputted data
+  * the activation functions provide a representation for data that can't be linearly separated
+  * arc:
+    * input units (scalar values)
+    * hidden units
+    * output units
+      * should provide a normalized probability dist across possible output values
+* fully-connected
+  * the output of every node in layer A serves as an input to every node in layer B
+* LSTM
+  * network that used to be the go to for NLP problems especially machine translation
+  * variant of an RNN that has "feedback layer" (as opposed to information only travelling forward through the network)
+  * the LSTM cell retains its hidden state through time to provide a "memory" like mechanism
+* what is back propagation?
+  * the learning procedure for the weights of neural networks, by iteratively taking the gradient of the loss function
+    * each node receives its parents gradient
+    * computes a local gradient (gradient of its output with respect to its input) 
+    * uses the chain rule to combine this with its parents and then send that to the prior layer
+  * expensive process because it has to loop over every training example
+* what is dropout
+  * regularize the learning procedure by randomly setting the weights of nodes to 0 and removing that entire row
+  * prevents overfitting
+* what is the vanishing gradient problem
+  * when numerous inputs result in many derivatives close to 0, the error becomes so small that it can't be used for training
+  * using RelU helps because its derivative is simply 1 when x > 0
+  * transformers / attention get us around this problem
+* what is a (non linear) activation function
+  * a non linear activation function transforms inputs to a non linear space which allows a neural network to patterns from a non linear version of the input
+  * this allows it to make sophisticated decisions across boundary lines that aren't constrained by linearity
+* what is sigmoid
+  * maps the value z to a range between 0 and 1
+  * the logistic function
+* what is softmax
+  * turns a vector of values into a vector of values that sum to 1. 
+  * represent a probability dist over a discrete variable with n possible values
+* what is RelU
+  * maps the value of z to 0 if its negative, else return z
+* what is Hyperbolic tangent
+  * maps the value of z to a range between -1 and 1
 
 ### Strategies and Discussion
 
@@ -303,6 +350,9 @@ END AS tennis_decision
   * optimization and fine-tuning
   * evaluate model on unseen data
 * what is gradient descent?
+  * algorithm for finding the minimum of a loss function
+  * iteratively adjust weights in the opposite direction of current gradient
+  * stochastic gradient descent is a variation, estimates the true calculation of the gradient with a calculation from a random sample of the data set
 * what is ensemble learning?
   * combining different models in order to produce more robust outcomes
   * bagging
@@ -312,6 +362,9 @@ END AS tennis_decision
     * XGBoost
     * ADAboost
 * what is a bias term?
+  * bias term provides a weight-free representation of data
+  * for example with linear regression, the bias term ensures that our model doesnt require points to pass through the origin
+  * in neural networks, it helps move the outputs of activation functions slightl
 * diff bt parametric and non parametric model?
   * a parametric model relies on underlying assumptions that a set of parameters can capture everything there is to know about the data
   * non parametric models do not rely on this assumption
@@ -373,14 +426,6 @@ END AS tennis_decision
   * common form of unsupervised learning
   * "identify similar gene strands"
   * "identify similar logos at the grocery store"
-* what is back propagation?
-* what is pooling?
-* what is convolution?
-* what is dropout?
-* what is "fully connected"?
-* what is a (non linear) activation function
-  * a non linear activation function transforms inputs to a non linear space which allows a neural network to patterns from a non linear version of the input
-  * this allows it to make sophisticated decisions across boundary lines that aren't constrained by linearity
 
 ## Probability
 
@@ -440,6 +485,11 @@ END AS tennis_decision
   * when a set of vectors cannot be written as a linear combination of one another
   * the only solution to setting them up as a system Ax = y is 0.
   * every column in a matrixA  has to be linearly independent if A is invertible.
+* what is an eigenvector
+  * makes this equation true
+  * Av = λv results in a vector U that points in the same direction as v
+  * where λ is the eigenvalue, the "scaling" factor
+  * does not change direction during a transformation
 
 ## Helpful Calculus
 
@@ -471,6 +521,7 @@ END AS tennis_decision
   * if you draw large, random samples from a populations, the means of those samples will be distributed normally around the population mean
   * you can game this out by noting the variance of the sample mean drops to 0 as the number of samples becomes very large
   * for example, 1000 fair coin flips can be modeled by a normal dist N~(500, 250)
+  * thanks to CLT we *know* the population mean just from taking a large enough sample
 * what is the law of large numbers?
   * sample mean gets closer to the expected value as sample size increases
   * ie, as we flip a coin, more and more, the observed p(heads) will get closer to p(tails)
@@ -575,11 +626,13 @@ return bool(p_val, sig)
   * ie, we accept an alternative hypothesis even though it can be attributed to chance!
   * its probability is Alpha
   * (telling a man he is pregnant)
+  * (in NER - label a person entity as a place)
 * what is type II
   * type II error is a false negative
   * when we fail to reject the null hypothesis when it is false
   * ie, we fail to observe a statistical difference when there is one!
   * (telling a quite-pregnant woman she is not pregnant)
+  * (in NER - missing the fact that Paris is a city in France)
   * probability is Beta
 * what is statistical power
   * the probability of *not* making a type II error, of failing to accept the alternative hypothesis when there is enough evidence to accept it is not occurring by random chance
@@ -603,6 +656,7 @@ return bool(p_val, sig)
   * The probability that, *in the long run*, the null hypothesis remains accurate (which will never be 0 just because of how things work out). 
   * When it is sufficiently small - less than alpha -- we *reject* the null and adopt the alternative explanation.
   * the amount of area not covered by the accumulation of the dist wrt the retrieved test statistic
+    * the remaining area!
 * what is A/B testing
   * A/B testing is just another way of setting up a hypothesis test.
   * average revenue per user, Gaussian
@@ -637,27 +691,58 @@ return bool(p_val, sig)
 * what is lemmatization?
   * lemmatization has a similar goal, but uses a morphological analysis to inform its decision making with the goal of returning the "dictionary" form of a word
     * `seeing seen sees` -> `see`
-* what is name entity recognition?
-  * [todo]
+* what is named entity recognition?
+  * captures the task of, can we extract *who* a text is talking about
+  * different sub tasks, like identifying corefers and anaphors
+  * extremely complicated
+  * in python: SpaCY
+  * this is an area that relies on hand-annotated gold-standard data
+    * wow, at yext, they hand annotate tons of queries
+  * neural models combine previous syntax/rule-based methods with other solutions
+  * at yext:
+    * 1 - extract entities
+    * 2 - look up against clients Knowledge base
+    * 3 - serve relevant results
+    * to answer a question like "branch in pittsburg, pa"
+  * question - is the thumbs down granular enough feedback for retraining on a mistake?
 * what is coreference resolution?
   * [todo]
 * what is tf-idf
   * term frequency inverse document frequency
   * a measure of lexical richness that can be used to see what words are the most characteristic of a particular document in a corpus
-  * 
+  * calculation steps:
+    * 1 - capture the vocabulary of the corpus
+    * 2 - array the documents as rows, every possible word as columns
+    * 3 - for every word in the vocabulary
+      * - count how many times it is in document D
+      * - count how many total documents it appears in
+      * the term-frequency per doc is how many times it is in D / how many total words are in D
+      * document frequency is: total number of documents / [how many documents it appears in + 1]
+        * we add zero to the denom so we don't divide by 0
+      * accumulate this as tf-idf w/ : tf * log(df)
+    * 4 - assemble these numbers at document D for every word in Vocab
+  * once we have these metrics, we can carry out exercises like for example making an embedding for each word by slicing it up and making a vector for each word
+    * you could imagine making a "document" vector as well by computing its mean and comparing it to all the other document vectors
 * what is dependency parsing?
-  * [todo]
+  * modeling the syntactic structure of a sentence by analyzing the grammatical relationships between the words in a sentence
+  * for example in `rainy day`, rainy is an adjectival modifier for day
+  * provides a "hierarchy" of children / ancestors
 * what is a language model?
-  * [todo]
-* in today's world, what is the most robust way to do sentiment analysis?
+  * provide a way to quantify the probability of a sequence of text occurring
+  * "operationalize the fluency" of an input sequence
+  * `P(w1 = “call”, w2 = “me”, w3 = “Ishmael”) x P(STOP)`
 * when would you want to keep stop words?
   * in certain applications like coreference resolution or part of speech tagging, stop words could be very important
   * for example we would want to keep determiners like 'an' 
 * explain word embeddings.
-  * word embeddings provide a nuanced representation of words
-  * they serve as the initial input to many NLP problems
-  * to construct word embeddings, packages like GLoVE and word2vec 
-  * [todo]
+  * word embeddings rely on the distributional hypothesis: words that occur in similar contexts have similar meaning
+  * they serve as the initial input to many modern NLP solutions
+  * we prefer *dense* vectors rather than simply the solutions generated from tf-df
+    * less params more efficient and avoids overfitting
+  * word2vec = skipgram, static embedding for each word
+  * GLoVE combines word2vec and pointwise mutual info
+  * cool applications - two words most "similar" when their cosine similarity is very small.
+    * `v • w  / (len(v) * len(w))`
 * what is chi squared
   * tests whether there is a statistically significant difference between observed and expected frequencies
   * for NLP: could use chi squared on tf-idf scores
@@ -670,17 +755,28 @@ return bool(p_val, sig)
   * attention
   * transformers
   * fine-tuning
+  * open source
+* why is GPT so good?
+  * huge pool of params + data
+  * byte pair encoding
+  * no need to fine tune (zero/few shot)
+  * transformers
 * how do you reduce dimensionality of textual data?
     * PCA
-      * explain PCA
-      * [todo]
-    * LDA
+      * transform data to a new coordinate system
+      * axis 1 = greatest variance (by projection), axis 2 = second greatest, etc.
+      * each of these levels is a "principal component"
+      * 
+    * LSA
       * matrix decomposition
       * removing unneeded columns
-      * [todo]
-    * one hot encoding
-      * [todo]
+* what is one hot encoding
+  * one hot encoding is an extremely simple way to represent the words in a vocabulary
+  * makes V x V size matrix, and place a 1 at slots xi = ji.
+  * in this way, we can use this matrix as a lookup table for that words embedding information in a matrix filled w/ embedding info because one-hot @ "candy" dot embedding_matrix will hand us back the embedding for candy
 * compare and contrast BERT and GPT-3
+  * BERT - devlin et al 2019
+  * GPT3 - brown et al 2020
   * BERT is bidirectional, GPT is left to right
   * BERT uses word piece tokenization, GPT uses byte pair encoding
   * GPT has far more parameters than BERT
@@ -692,6 +788,7 @@ return bool(p_val, sig)
   * GPT-3 trains with an encoder/decoder model, next word prediction
     * directly compute P(w | its preceding words)
   * BERT is open sourced, GPT3 still under wraps
+  * BERTology is pretty cool, harder to do w/ GPT3
   * GPT-3 is especially good at text generation
 * explain how a transformer works
   * [todo]
