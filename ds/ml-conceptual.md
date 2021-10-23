@@ -8,6 +8,7 @@
 * how to summarize your data?
   * 5 number summary
   * leverage `ntile()` / `avg()` / `min()` / `max()` in SQL, `summary()` in R, `.describe()` on a pandas df
+  * look at its distribution, look for outliers
 * how do you discover outliers in your data?
   * sort by desc, asc
 * what assumptions can you make e.g. when can we say it's "normal"
@@ -204,6 +205,10 @@ for i in range(n_classes):
   * not great with more than 2 classes
   * prone to overfitting
   * does not provide probability estimates (unlike logistic)
+* test question - with 2 classes, what are the minimum number of support vectors you can have?
+  * 2 - if you have 2 data points and each lies on the margin.
+    * this is because when it makes the split, it does so by creating a linear margin between our data
+* very good for binary classification
 
 #### Decision Tree/Random Forest
 
@@ -229,7 +234,9 @@ END AS tennis_decision
   * ie, it's better when 8 samples go left and 8 samples go right then only 2 samples go left and 14 go right
   * one criteria: for each available var, which maximizes "information gain" and minimizes "entropy"
   * information gain = we want to increase our certainty at each step
-  * entropy = a measure of uncertainty for a data set
+  * entropy = a measure of purity for a data set
+    * `H(X) = – Σ (p * log2 p)`
+    * complete "purity" for flipping a coin - totally balanced outcomes
 * decision trees are prone to over fitting because you can perfectly fit a tree for any data set
   * would just be a little weird looking..
   * relatedly, they have high variance
@@ -238,7 +245,8 @@ END AS tennis_decision
   * uses de-correlated trees by randomly considering which features to split with. by reducing the number of features we can split with, we reduce variance
   * relies on bootstrapping
   * high powered version is XGboost
-* "loss functions" in addition to thinking about information gain / entropy, also gini coefficient (which produces a metric for how "pure" the nodes are)
+* "loss functions" in addition to thinking about information gain / entropy, also gini coefficient (which produces a diff metric for how "pure" the nodes are)
+* well suited for handling multi class
 
 #### Linear
 
@@ -256,15 +264,19 @@ END AS tennis_decision
     * you can optimize a cost function, which is just something like root mean squared error, via gradient descent
       * with LR, the cost function has only one single global minimum, so this is a good choice
   * what assumptions do you make when using linear models?
-    * that our data is linearly separable
+    * that our data is linearly related
     * that our residuals share a fairly constant variance (homoscedasticity)
-    * that our data are independent
+    * that outliers skew results
     * that for a fixed value of X, Y is normally distributed (gaussian)
     * residuals should be normally distributed
+    * that our independent columns are not highly correlated (multicollinearity)
   * what is homoscedasticity
     * the variance of residuals is constant throughout a model
   * what are some considerations about what features to hand off to a linear model
     * two columns should not be highly linearly related
+  * what is correlation(x,y)
+    * cov(x,y) / [var(x) * var(y)]
+    * a single outlier could either increase or decrease correlation depending on where it stands wrt the mean
   * what is ANOVA
     * analysis of variance
     * for analyzing diff bt means (not applicable for certain tasks)
@@ -295,6 +307,10 @@ plot(density(house_log_model$residuals))
 sd(house_lm$residuals)
 ```
 
+* that log fit is a special case
+* its still technically linear because we are trying to approximate the rate of change (not applying a log to the slope term) so it is still a "linear" problem
+  * slope still equals rate of growth
+
 #### Logistic
 
 * carry out a n-class problem (could be binary, could be multi class)
@@ -310,6 +326,11 @@ sd(house_lm$residuals)
   * `exp(coef(my_log_model))`
 * R code for logistic regression:
 * `logistic_model <- glm(counts ~ outcome + treatment, family = "binomial")`
+* the assumptions for logistic are different than for linear
+  * does not require a linear relationship bt dep. and indep
+  * the residuals do not need to be normally distributed
+  * it *does* assume that our observations are independent of one another
+  * requires a larger sample size than logistic
 
 #### KNN
 
@@ -440,6 +461,8 @@ p(the pizza rocks)
   * algorithm for finding the minimum of a loss function
   * iteratively adjust weights in the opposite direction of current gradient
   * stochastic gradient descent is a variation, estimates the true calculation of the gradient with a calculation from a random sample of the data set
+    * should reduce training time
+    * if its converging too quickly / modulating its output, reduce learning rate and increase batch size
 * what is ensemble learning?
   * combining different models in order to produce more robust outcomes
   * bagging
@@ -530,6 +553,9 @@ p(the pizza rocks)
 * Bayes theorem
   * P(A|B) = [P(B|A) * P(A)] / P(B)
 * definition of expected value:
+  * 𝐸(𝑋)=∑𝑥⋅𝑝(𝑥)
+* definition of variance:
+  * Var(𝑋)=∑(𝑥 - 𝐸(𝑋)^2) / n
 * how to get probability w/ Binomial Distribution
   * (N choose x)(p)^x (1-p)^ n-x
   * prob that world series goes to seven games:
@@ -540,6 +566,13 @@ p(the pizza rocks)
   * number of ways it can happen / total events in sample space
 * roll 3 die, probability all 3 dice have different top numbers
   * (6 * 5 * 4) / 6^3
+* number of ways that 3 rolled dice can have their tops be at least 16
+  * = p(sum is 18) + p(sum is 17) + p(sum is 16) all over 6^3
+  * p(sum is 18) is only 1 possibility, so that's (1/216)
+  * p(sum is 17) is 3 possibilities, so that's (3/216)
+  * p(sum is 16) is 6 possibilities, so that's (6/216)
+  * add together, 10/216 reduces to 5/108
+* 
 
 ## Linear
 
@@ -576,12 +609,15 @@ p(the pizza rocks)
 * what is linear independence:
   * when a set of vectors cannot be written as a linear combination of one another
   * the only solution to setting them up as a system Ax = y is 0.
-  * every column in a matrixA  has to be linearly independent if A is invertible.
+  * every column in a matrix A  has to be linearly independent if A is invertible.
 * what is an eigenvector
   * makes this equation true
   * Av = λv results in a vector U that points in the same direction as v
   * where λ is the eigenvalue, the "scaling" factor
   * does not change direction during a transformation
+  * a matrix can only have eigenvectors when it is invertible aka linearly independent
+  * once this is the case, we can generate an infinite number of eigenvectors (numbers) / eignevalues (scaling coeff.)
+  * 
 
 ## Helpful Calculus
 
@@ -604,6 +640,13 @@ p(the pizza rocks)
 * integral: `∫f(x)` = area under a curve f(x) 
   * typically (from a to b)
   * *amount of accumulation*
+
+## Random Math
+
+* Revenue is 2017 was 100. This was an 8% increase from 2016. What was the 2016 revenue?
+  * ask yourself, 100 is 8% bigger than what number?
+  * 1.08 * 100 = x => x = 100 / 1.08 = 92.59
+* 
 
 ## Statistics
 
@@ -952,7 +995,7 @@ return bool(p_val, sig)
       ```
   * SVM
     * used SVM with the most important features from random forest ...
-    * had just learned that in class, wanted a binary separation of my data
+    * had just learned that in class, wanted a *binary* separation of my data
       * used LOOCV since I had a pretty small data set
       ```R
       folds <- cvFolds(NROW(sub), K=50)
