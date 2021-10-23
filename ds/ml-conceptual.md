@@ -317,6 +317,7 @@ sd(house_lm$residuals)
 * learning task: learn coefficients for p = Sb (β0 +β1x1 + ....)
   * the betas - how important each feature is to our coefficients
   * how much predictive power they have
+  * initially, set weights to 0, then use MLE to optimize log odds
   * once we come up with their values, use the Sigmoid function to transform them into a distribution with values from 0 to 1.
 * what is the logistic function?
   * 1 / (1 + e^-t)
@@ -330,7 +331,7 @@ sd(house_lm$residuals)
   * does not require a linear relationship bt dep. and indep
   * the residuals do not need to be normally distributed
   * it *does* assume that our observations are independent of one another
-  * requires a larger sample size than logistic
+* requires a larger sample size than SVM
 
 #### KNN
 
@@ -928,6 +929,7 @@ return bool(p_val, sig)
   * BERT trains with masked language modeling and next sentence prediction
   * GPT-3 trains with an encoder/decoder model, next word prediction
     * directly compute P(w | its preceding words)
+  * BERT encoder only, just hands off information that you can decode during your specific task
   * BERT is open sourced, GPT3 still under wraps
   * BERTology is pretty cool, harder to do w/ GPT3
   * GPT-3 is especially good at text generation
