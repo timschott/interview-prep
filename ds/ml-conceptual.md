@@ -98,7 +98,7 @@
 * what is specificity?
   * true negatives / true negative + false positives
   * true negative rate
-  * (divide by first COL)
+  * (divide by second C
   * and 1 - specificity is "false positive rate"
 * why are these measures more rich than accuracy?
   * don't depend on class distribution
@@ -876,6 +876,8 @@ return bool(p_val, alpha / 2)
       * document frequency is: total number of documents / [how many documents it appears in + 1]
         * we add zero to the denom so we don't divide by 0
       * accumulate this as tf-idf w/ : tf * log(df)
+        * in practice, it usually makes sense to zero out negative scores
+        * since a word used in all docs has a tf-idf of 0 because it possesses no explanatory power
     * 4 - assemble these numbers at document D for every word in Vocab
   * once we have these metrics, we can carry out exercises like for example making an embedding for each word by slicing it up and making a vector for each word
 * what is dependency parsing?
@@ -893,7 +895,7 @@ return bool(p_val, alpha / 2)
   * word embeddings rely on the distributional hypothesis: words that occur in similar contexts have similar meaning
     * so - let's predict a words meaning by looking at its neighbors
   * they serve as the initial input to many modern NLP solutions
-  * we prefer *dense* vectors rather than simply the solutions generated from tf-df
+  * we prefer *dense* vectors rather than simply the solutions generated from tf-idf
     * less params more efficient and avoids overfitting
   * word2vec = skipgram, static embedding for each word
     * iteratively compute the weighting for a word by tuning weights that get applied to its neighbors, then compare with the real representation
