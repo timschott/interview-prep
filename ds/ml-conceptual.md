@@ -978,6 +978,32 @@ return bool(p_val, sig)
     * added metadata / other info from external APIs
     * DITA compliant
     * then dropped in s3
+  * Product Ingestion?
+    * take products from salesforce, transform from XML to java objects, commit to CMS
+    * sync between ingested and in CMS
+    * automatic
+    * asynchronous
+  * Tools / what did i work with
+    * stack: 
+      * Java
+        * modeling, api integrations, data ingestion
+        * model view view model ~ MVC
+      * MySQL - data migration
+      * json: data contracts
+      * hbs: front-end templates
+      * less/js for FE (didn't really touch)
+    * tech: 
+      * Docker
+        * containers for mysql, solr, tomcat
+        * easy to get client devs on board
+      * Travis -> github actions
+        * CI/CD
+      * EC2
+        * production code / releases
+      * S3
+        * data / data movement
+      * Jira
+        * tickets
 * Thesis
   * tokenization?
     * word, sentence, paragraph
@@ -990,6 +1016,7 @@ return bool(p_val, sig)
     * a random forest was used because ensemble learning is an effective way to combine the output of many decision trees
       * random forest uses decorrelated trees to expose clearer insights in our data
       * prevents overfitting
+    * most important features: freq of "perception" words (from harvard inquirer), amount of times the word "i" appears, and the freq of consecutive sentences starting with the same word
       ```R
           m <- randomForest(new_df[,-31], new_df$label2, 
                         sampsize = round(0.8*(length(new_df$label2))),ntree = 500, 
@@ -999,6 +1026,9 @@ return bool(p_val, sig)
     * used SVM with the most important features from random forest ...
     * had just learned that in class, wanted a *binary* separation of my data
       * used LOOCV since I had a pretty small data set
+      * In 42 out of 50 trials, the test novel was placed in its true class. 
+      * This is where that 84% accuracy comes from.
+      * According to my classifier, novels with high levels of anaphora and low levels of perception belong in the “lyrical” class. 
       ```R
       folds <- cvFolds(NROW(sub), K=50)
       results <- c(0)
