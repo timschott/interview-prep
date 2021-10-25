@@ -98,6 +98,8 @@
 * what is specificity?
   * true negatives / true negative + false positives
   * true negative rate
+  * (divide by first COL)
+  * and 1 - specificity is "false positive rate"
 * why are these measures more rich than accuracy?
   * don't depend on class distribution
   * so its helpful for evaluating classifiers for rare events like cancer diagnosis
@@ -230,13 +232,13 @@ CASE WHEN Outlook == 'sunny' and Humidity == 'normal' THEN TENNIS
 END AS tennis_decision
 ```
   * how do we fill up the tree? what goes where?
-  * alg: at each level, we want to maximize the amount of division in our data
-  * ie, it's better when 8 samples go left and 8 samples go right then only 2 samples go left and 14 go right
+  * alg: at each level, we want to maximize the information contained in our data
+  * ie, it's better when only 2 samples go left and 14 go right than 8 samples go left and 8 samples go right because those children nodes are "purer" 
   * one criteria: for each available var, which maximizes "information gain" and minimizes "entropy"
   * information gain = we want to increase our certainty at each step
   * entropy = a measure of purity for a data set
     * `H(X) = – Σ (p * log2 p)`
-    * complete "purity" for flipping a coin - totally balanced outcomes
+    * complete "chaos" for flipping a coin - totally balanced outcomes - no aligned membership
 * decision trees are prone to over fitting because you can perfectly fit a tree for any data set
   * would just be a little weird looking..
   * relatedly, they have high variance
@@ -440,7 +442,7 @@ p(the pizza rocks)
   * turns a vector of values into a vector of values that sum to 1
   * represent a probability dist over a discrete variable with n possible values
 * what is RelU
-  * maps the value of z to 0 if its negative, else return z
+  * 0 if its negative, else return y = x.
 * what is Hyperbolic tangent
   * maps the value of z to a range between -1 and 1
 
@@ -497,6 +499,7 @@ p(the pizza rocks)
       * 9 pieces are training, 1 is test set
       * iterate over every combo and collect the scores
       * average them to see how you do
+  * once you are finished, you have a sense of how your procedure fairs against randomized aggregations of your data. you can then consider this to be a pessimistic estimate of how this learning procedure will fair against the entirety of your dataset - which is your final "model"   
 * explain grid search:
   * grid search is a method for hyper parameter optimization where you input a group of potential hyperparameters and test each version of your model
     * ie, find the best performing cost function for an SVM or learning rate for NN
@@ -553,10 +556,11 @@ p(the pizza rocks)
     * also referred to as disjoint
 * Bayes theorem
   * P(A|B) = [P(B|A) * P(A)] / P(B)
+  * the bayesian "inference" = let's update the model as we gather more information
 * definition of expected value:
   * 𝐸(𝑋)=∑𝑥⋅𝑝(𝑥)
 * definition of variance:
-  * Var(𝑋)=∑(𝑥 - 𝐸(𝑋)^2) / n
+  * Var(𝑋)=∑((𝑥 - 𝐸(𝑋))^2) / n
 * how to get probability w/ Binomial Distribution
   * (N choose x)(p)^x (1-p)^ n-x
   * prob that world series goes to seven games:
@@ -567,6 +571,15 @@ p(the pizza rocks)
   * number of ways it can happen / total events in sample space
 * roll 3 die, probability all 3 dice have different top numbers
   * (6 * 5 * 4) / 6^3
+* roll 3 die, how many distinct combinations of numbers?
+  * 6 choose 3 = 20
+* combination
+  * order does not matter
+  * n! / k! * (n-k)!
+* permutation
+  * order does matter
+  * n! / (n - k)!
+  * this is bigger than combination because it captures the diff bet (1,2,3) and (1, 3, 2)
 * number of ways that 3 rolled dice can have their tops be at least 16
   * = p(sum is 18) + p(sum is 17) + p(sum is 16) all over 6^3
   * p(sum is 18) is only 1 possibility, so that's (1/216)
@@ -641,6 +654,13 @@ p(the pizza rocks)
 * integral: `∫f(x)` = area under a curve f(x) 
   * typically (from a to b)
   * *amount of accumulation*
+* general integral rule: ∫f(x^a) = f(x^a + 1) / a+1
+  * integral of 2x is 2x^2 / 2 = x^2 + c
+* integration by parts: ∫udv = uv - ∫vdu
+  * ∫xe^x
+  * u =x, dv = e^x, v = e^x
+  * = xe^x - ∫e^x
+  * = xe^x - e^x
 
 ## Random Math
 
@@ -701,12 +721,10 @@ p(the pizza rocks)
 
 ```python
 t_statistic = abs(avg_diff / standard_error)
+# in this case, double p val it because two tailed test
+p_val = 1- (2 * stats.t.cdf(t_statistic, dof))
 # in this case, break in two (ie go from 97.5 -> 100)
-t_at_sig = stats.t.ppf(1 - (alpha/2), sample_size)
-dof = sample_size - 1
-# in this case, double it because two tailed test
-p_val = 2 * (1 - stats.t.cdf(t_statistic, df))
-return bool(p_val, sig)
+return bool(p_val, alpha / 2)
 ```
 
 * when to use a binomial test
@@ -873,10 +891,12 @@ return bool(p_val, sig)
   * for example we would want to keep determiners like 'an' 
 * explain word embeddings.
   * word embeddings rely on the distributional hypothesis: words that occur in similar contexts have similar meaning
+    * so - let's predict a words meaning by looking at its neighbors
   * they serve as the initial input to many modern NLP solutions
   * we prefer *dense* vectors rather than simply the solutions generated from tf-df
     * less params more efficient and avoids overfitting
   * word2vec = skipgram, static embedding for each word
+    * iteratively compute the weighting for a word by tuning weights that get applied to its neighbors, then compare with the real representation
   * GLoVE combines word2vec and pointwise mutual info
   * cool applications - two words most "similar" when their cosine similarity is very small.
     * `v • w  / (len(v) * len(w))`
@@ -884,6 +904,7 @@ return bool(p_val, sig)
 * what is chi squared
   * tests whether there is a statistically significant difference between observed and expected frequencies
   * for NLP: could use chi squared on tf-idf scores
+  * hypothesis - occurrence of words is independent and random (which we know is not the case)
 * why is BERT so good?
   * word piece (plus [CLS] and [SEP])
   * pre-training
@@ -899,16 +920,23 @@ return bool(p_val, sig)
   * fine-tuning
     * domain specific adaptation w/ your own dataset, objective function and parameter tuning
   * open source
+  * can study - bertology
+  * bert = bidirectional encoder representations from transformers
+  * devlin et al
 * why is GPT so good?
   * huge pool of params + data
   * byte pair encoding
   * no need to fine tune (zero/few shot)
+    * SOA w/o tuning
   * transformers
+  * generative pre trained transformers
+  * brown et al, open ai
 * how do you reduce dimensionality of textual data?
     * PCA
       * transform data to a new coordinate system
       * axis 1 = greatest variance (by projection), axis 2 = second greatest, etc.
       * each of these levels is a "principal component"
+      * for example, use this to visualize word embeddings
     * LSA
       * matrix decomposition
       * removing unneeded columns
@@ -1009,6 +1037,7 @@ return bool(p_val, sig)
     * word, sentence, paragraph
     * by hand, rules based / regex
     * probably should have used a package, there
+  * stood up database w/ sqlite
   * feature engineering
     * 31 features like, punctuation per line, syllables per word, etc
   * Decision Trees
