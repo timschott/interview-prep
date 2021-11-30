@@ -32,6 +32,8 @@
   * use a very sensitive cost function to artificially balance the training process
     * you can do this w/ SVM
   * use a metric besides accuracy (F1 that takes false negatives into account for example)
+    * because accuracy for an imbalanced data set doesn't show that you're learning anything
+      * if labels are 99% class A and your classifier returns "A" it is going to be accurate 99% of the time
 
 ## Model Evaluation
 
@@ -40,7 +42,8 @@
 * what is bias?
   * difference between average prediction in our model and the correct prediction
 * what is variance?
-  * variability of model output for a given observation
+  * variability of model output over a training set 
+  * - how "stable" the results are
 * what is the bias variance tradeoff?
   * model is too simple, can't accurately understand dataset
   * model too complex, can't generalize to new data points
@@ -75,12 +78,17 @@
       * least absolute squares
       * adds an absolute value of penalty
       * because of this, it can completely remove a coefficient by setting its value to zero
+      * because the derivative of |w| is 1
     * L2 = Ridge Regression
       * adds a squared magnitude of penalty
       * increases bias and reduces variance
+      * derivative of w^2 is 2w - not as much of a shrink
   * when to use?
     * regularization prevents a single feature from being too large during model training. it can be used when you need to prevent overfitting and want your model to generalize better.
     * we would use L1 LASSO during feature selection because it can completely drop unneeded coefficients
+  * for linear regression:
+    * normally, we are using sgd to optimize SSE
+      * now - add a penalty term at the end that gets applied to every weight
 
 ### Metrics
 
@@ -120,7 +128,7 @@ for i in range(n_classes):
 * what is a residual?
   * difference between a predicted value and a true value
 * what is the ROC curve
-  * receiver operating curve
+  * receiver operating characteristic
   * plot recall on y axis, plot 1 - specificity as x axis
     * note 1 - specificity = "false positive rate"
   * the ROC curve is better the more area that is underneath 
@@ -937,6 +945,7 @@ return bool(p_val, alpha / 2)
     * PCA
       * transform data to a new coordinate system
       * axis 1 = greatest variance (by projection), axis 2 = second greatest, etc.
+        * by finding largest eigenvalues of matrix of covariates - therefore reducing redundant data
       * each of these levels is a "principal component"
       * for example, use this to visualize word embeddings
     * LSA
@@ -946,6 +955,8 @@ return bool(p_val, alpha / 2)
   * one hot encoding is an extremely simple way to represent the words in a vocabulary
   * makes V x V size matrix, and place a 1 at slots xi = ji.
   * in this way, we can use this matrix as a lookup table for that words embedding information in a matrix filled w/ embedding info because one-hot @ "candy" dot embedding_matrix will hand us back the embedding for candy
+  * another way to use one hot encoding it to change a column of categorical values into distinct, flexed columns of all 0's and a 1
+    * like pivoting with sql (casewhen..)
 * compare and contrast BERT and GPT-3
   * BERT - devlin et al 2019
   * GPT3 - brown et al 2020
