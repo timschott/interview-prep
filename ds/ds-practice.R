@@ -436,3 +436,7 @@ plot(house_log_model$residuals)
 plot(density(house_log_model$residuals))
 sd(house_lm$residuals)
 
+#### 
+
+# p val at z = 2.002
+1 - pnorm(2.002)
