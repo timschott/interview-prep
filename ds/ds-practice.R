@@ -430,13 +430,32 @@ ggplot(data = real_estate, aes(x = train_station_distance, y = house_price)) +
 # superior to linear model!
 house_log_model <- lm(house_price ~ log(train_station_distance), data=real_estate)
 
+# look at summary
+summary(house_lm)
+summary(house_log_model)
+
+plot(house_lm$fitted.values, house_lm$residuals)
+plot(house_log_model$fitted.values, house_log_model$residuals)
+
 # confirm homoscedasticity - constant variance of residuals
 plot(house_log_model$residuals)
 # confirm normality of residuals
 plot(density(house_log_model$residuals))
 sd(house_lm$residuals)
 
+test <- as.data.frame(house_lm$residuals)
+shapiro.test(test$res)
+colnames(test) <- c("res")
+# confirm normality of residuals
+ggplot(test, aes(sample=res)) + 
+  stat_qq() +
+  labs(title="QQ-Plot, Age", x = "Theoretical", y = "Sample")
+# this overturns the Null
+shapiro.test(test$res)
 #### 
 
 # p val at z = 2.002
 1 - pnorm(2.002)
+
+pnorm(.5)
+qnorm(pnorm(.5))
